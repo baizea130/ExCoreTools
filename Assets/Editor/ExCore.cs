@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class ExCore : EditorWindow
 {
-    [MenuItem("Tools/ExCore", false, 0)]
+    [MenuItem("Tools/生成配置文件", false, 0)]
+    public static void InitConfig()
+    {
+        CSharpWriter.Write("MethodExtensions");
+    }
+    [MenuItem("Tools/ExCore", false, 1)]
     public static void ShowWindow()
     {
         var window = GetWindow<ExCore>();
@@ -20,7 +23,7 @@ public class ExCore : EditorWindow
     }
     private void OnGUI()
     {
-        NavigationCore.Current?.OnGuI();
+        NavigationCore.Current?.OnGUI();
     }
     private void OnDisable()
     {
@@ -35,9 +38,9 @@ public abstract class EditorPage
     public virtual string Title => GetType().Name;
     public virtual string ParentPage => null;
     public virtual void OnEnter(object data) { }
-    public abstract void OnGuI();
+    public abstract void OnGUI();
     public virtual void OnExit() { }
-    public virtual void DrowBackBtn(string parent)
+    public virtual void DrawBackBtn(string parent)
     {
         if (!string.IsNullOrEmpty(parent))
         {
@@ -47,7 +50,7 @@ public abstract class EditorPage
             }
         }
     }
-    public virtual void DrowBottomItem(string title)
+    public virtual void DrawBottomItem(string title)
     {
         GUILayout.FlexibleSpace();
         EditorGUILayout.BeginHorizontal(GUILayout.Height(30));
@@ -75,6 +78,34 @@ public abstract class EditorPage
         GUILayout.EndHorizontal();
         return param;
     }
+    /// <summary>
+    /// 在重大操作前生成的保护性弹窗，Action为空时为单纯的提示弹窗
+    /// </summary>
+    /// <param name="content">内容文本</param>
+    /// <param name="execute">点击确认后触发的功能</param>
+    protected void ProtectDialog(string content, Action execute = null)
+    {
+        bool ok;
+        if (execute == null)
+        {
+            ok = EditorUtility.DisplayDialog(
+            "提示",        // 标题
+            content,          // 内容
+            "OK我收到"          // 确定按钮文字
+            );
+            return;
+        }
+        ok = EditorUtility.DisplayDialog(
+            "提示",        // 标题
+            content,          // 内容
+            "OK我收到",           // 确定按钮文字
+            "我再想想"            // 取消按钮文字
+            );
+        if (ok)
+        {
+            execute();
+        }
+    }
 }
 /// <summary>
 /// 主菜单类
@@ -83,7 +114,7 @@ public class MenuPage : EditorPage
 {
     public override string Title => "主菜单";
     public override string ParentPage => null;
-    public override void OnGuI()
+    public override void OnGUI()
     {
         GUILayout.BeginHorizontal();
         DrawButtonsOnTop<MenuPage_Main>(this is MenuPage_Main ? "<主要功能>" : "主要功能");
@@ -95,12 +126,11 @@ public class MenuPage : EditorPage
         }
         GUI.contentColor = Color.white;
         GUILayout.EndHorizontal();
-        var prevColor = GUI.backgroundColor;
         GUI.backgroundColor = Color.black;
 
         GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(2));
 
-        GUI.backgroundColor = prevColor;
+        GUI.backgroundColor = Color.white;
     }
     private void DrawButtonsOnTop<T>(string name) where T : EditorPage, new()
     {
@@ -125,11 +155,11 @@ public class MenuPage_Setting : MenuPage
 {
     public override string Title => "通用设置";
     public override string ParentPage => "主菜单";
-    public override void OnGuI()
+    public override void OnGUI()
     {
-        base.OnGuI();
+        base.OnGUI();
         GUILayout.Label("通用设置", GetTitleStyle());
-        base.DrowBottomItem(Title);
+        base.DrawBottomItem(Title);
     }
 }
 /// <summary>
@@ -139,9 +169,9 @@ public class MenuPage_Main : MenuPage
 {
     public override string Title => "主要功能";
     public override string ParentPage => "主菜单";
-    public override void OnGuI()
+    public override void OnGUI()
     {
-        base.OnGuI();
+        base.OnGUI();
         GUILayout.Label("主要功能", GetTitleStyle());
         GUILayout.BeginVertical();
         {
@@ -151,7 +181,7 @@ public class MenuPage_Main : MenuPage
             GUILayout.EndHorizontal();
         }
         GUILayout.EndVertical();
-        base.DrowBottomItem(Title);
+        base.DrawBottomItem(Title);
     }
     private void DrawButton<T>(string name) where T : EditorPage, new()
     {
@@ -167,7 +197,53 @@ public class MenuPage_Main : MenuPage
 /// </summary>
 public class MainFunction : EditorPage
 {
-    public override void OnGuI() { }
+    public override void OnGUI() { }
+}
+/// <summary>
+/// 在场景中生成玩家预设
+/// </summary>
+public class PlayerTempSpawn : MainFunction
+{
+    public override string Title => "生成玩家预设";
+    public override string ParentPage => "主要功能";
+    private int mSelectIndex = -1;
+    private string[] mOptions = { "胶囊体预设" };
+    public override void OnGUI()
+    {
+        mSelectIndex = EditorGUILayout.Popup("选择玩家预设", mSelectIndex, mOptions);
+        if (GUILayout.Button("生成"))
+        {
+            switch (mSelectIndex)
+            {
+                case 0:
+                    {
+                        GameObject Player = GameObject.FindGameObjectWithTag("Player");
+                        if (Player != null)
+                        {
+                            ProtectDialog($"场景中已经有了Player标签的物体\n名称：{Player.name}\n将使用此物体作为基准"
+                            , () => { InitComponent(Player); return; }
+                            );
+                        }
+                        Player = GameObject.Find("Player");
+                        if (Player != null)
+                        {
+                            ProtectDialog($"场景中已经有了名为Player的物体\n将使用此物体作为基准"
+                            , () => { InitComponent(Player); return; }
+                            );
+                        }
+                        Player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                        InitComponent(Player);
+                        break;
+                    }
+                default: break;
+            }
+        }
+    }
+    private void InitComponent(GameObject temp)
+    {
+        var rb = temp.GetOrAddComponent<Rigidbody>();
+        var collider = temp.GetOrAddComponent<Collider>();
+    }
 }
 /// <summary>
 /// 第一人称控制器界面
@@ -178,10 +254,10 @@ public class FirstPersonSpawn : MainFunction
     public override string ParentPage => "主要功能";
     private PlayerData data = new PlayerData();
     private GameObject Player;
-    public override void OnGuI()
+    public override void OnGUI()
     {
         GUILayout.Label("第一人称控制器", GetTitleStyle());
-        base.DrowBackBtn(ParentPage);
+        base.DrawBackBtn(ParentPage);
 
         Player = EditorGUILayout.ObjectField(
        "场景中的玩家预制体", Player, typeof(GameObject), true) as GameObject;
@@ -191,18 +267,28 @@ public class FirstPersonSpawn : MainFunction
         data.Sensitivity = SpawnFloatField("视角灵敏度", data.Sensitivity, new Vector2(1, 9999));
         if (GUILayout.Button("确认生成"))
         {
-            var replacements = new Dictionary<string, string>
+            if (Player == null)
             {
-                { "Speed",       data.Speed.ToString() },
-                { "Jump",        data.Jump.ToString() },
-                { "Sensitivity", data.Sensitivity.ToString() },
-                { "Height",      data.Height.ToString() }
-            };
-            List<GameObject> target = new List<GameObject> { Player };
-            Debug.Log(CSharpWriter.Write("FirstPerson", replacements, target));
+                ProtectDialog("你忘记绑定场景中的玩家了");
+            }
+            else
+            {
+                ProtectDialog("即将生成/覆盖第一人称控制器脚本并自动附加", () =>
+                {
+                    var replacements = new Dictionary<string, string>
+                    {
+                                    { "Speed",       data.Speed.ToString() },
+                                    { "Jump",        data.Jump.ToString() },
+                                    { "Sensitivity", data.Sensitivity.ToString() },
+                                    { "Height",      data.Height.ToString() }
+                    };
+                    List<GameObject> target = new List<GameObject> { Player };
+                    Debug.Log(CSharpWriter.Write("FirstPerson", replacements, target));
+                });
+            }
         }
 
-        base.DrowBottomItem(Title);
+        base.DrawBottomItem(Title);
     }
     [Serializable]
     private class PlayerData
@@ -213,6 +299,7 @@ public class FirstPersonSpawn : MainFunction
         public float Jump;
     }
 }
+
 /// <summary>
 /// 交互逻辑生成控制器
 /// </summary>
@@ -220,12 +307,12 @@ public class InteractableSpawn : MainFunction
 {
     public override string Title => "交互逻辑生成控制器";
     public override string ParentPage => "主要功能";
-    public override void OnGuI()
+    public override void OnGUI()
     {
         GUILayout.Label("交互逻辑生成控制器", GetTitleStyle());
-        base.DrowBackBtn(ParentPage);
+        base.DrawBackBtn(ParentPage);
 
 
-        base.DrowBottomItem(Title);
+        base.DrawBottomItem(Title);
     }
 }

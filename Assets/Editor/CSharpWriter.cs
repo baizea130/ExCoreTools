@@ -14,7 +14,7 @@ public static class CSharpWriter
     static string key = "Loaded";
     static string value = string.Empty;
     /// <summary>
-    /// 将文本文件转化为CS脚本
+    /// 将文本文件(包含可替换字段)转化为CS脚本
     /// </summary>
     /// <param name="name">脚本名称</param>
     /// <param name="replacements">需要替换的参数</param>
@@ -40,6 +40,7 @@ public static class CSharpWriter
             if (targets.Count != 0)
             {
                 Dict.Clear();
+                value = string.Empty;
                 for (int i = 0; i < targets.Count; i++)
                 {
                     if (!Dict.ContainsKey(targets[i].name))
@@ -50,6 +51,25 @@ public static class CSharpWriter
                 SessionState.SetString(key, value);
             }
         }
+        AssetDatabase.Refresh();
+        return "生成成功";
+    }
+     /// <summary>
+    /// 将文本文件(不包含可替换字段)转化为CS脚本
+    /// </summary>
+    /// <param name="name">脚本名称</param>
+    /// <param name="replacements">需要替换的参数</param>
+    /// <param name="target">生成后脚本挂载的物体</param>
+    /// <returns></returns>
+    public static string Write(string name)
+    {
+        string input = Path.Combine(Application.dataPath, "Resources", "Config", name + ".txt");
+        if (!File.Exists(input))
+            return $"配置文件 {name} 文件不存在";
+        string content = File.ReadAllText(input);
+        Directory.CreateDirectory($"{Application.dataPath}/Generate");
+        string output = $"{Application.dataPath}/Generate/{name}.cs";
+        File.WriteAllText(output, content);
         AssetDatabase.Refresh();
         return "生成成功";
     }
