@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ExCore : EditorWindow
 {
@@ -91,6 +93,23 @@ public abstract class EditorPage
         GUILayout.Label($"{description} ({bound.x}~{bound.y}) :", GUILayout.Width(NavigationCore.ToolWindow.position.width / 3));
         param = EditorGUILayout.FloatField(param, options);
         param = Mathf.Clamp(param, bound.x, bound.y);
+        GUILayout.EndHorizontal();
+        return param;
+    }
+    /// <summary>
+    /// 生成Int输入框
+    /// </summary>
+    /// <param name="description">文本描述</param>
+    /// <param name="param">外部参数</param>
+    /// <param name="bound">数值边界</param>
+    /// <param name="options">风格</param>
+    /// <returns></returns>
+    protected int SpawnIntField(string description, int param, Vector2 bound, GUILayoutOption[] options = null)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"{description} ({bound.x}~{bound.y}) :", GUILayout.Width(NavigationCore.ToolWindow.position.width / 3));
+        param = EditorGUILayout.IntField(param, options);
+        param = (int)Mathf.Clamp(param, bound.x, bound.y);
         GUILayout.EndHorizontal();
         return param;
     }
@@ -197,6 +216,7 @@ public class MenuPage_Main : MenuPage
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
+            DrawButton<UISystemSwawn>("生成UI预设");
             DrawButton<InteractableSpawn>("交互逻辑生成控制器");
             GUILayout.EndHorizontal();
         }
@@ -205,7 +225,7 @@ public class MenuPage_Main : MenuPage
     }
     private void DrawButton<T>(string name) where T : EditorPage, new()
     {
-        if (GUILayout.Button(name, GUILayout.Height(30)))
+        if (GUILayout.Button(name, GUILayout.Height(30), GUILayout.Width(NavigationCore.ToolWindow.position.width / 2 - 5)))
         {
             NavigationCore.Push<T>();
         }
@@ -274,6 +294,108 @@ public class PlayerTempSpawn : MainFunction
     }
 }
 /// <summary>
+/// UI系统控制器
+/// </summary>
+public class UISystemSwawn : MainFunction
+{
+    public override string Title => "生成UI预设";
+    public override string ParentPage => "主要功能";
+    private int ResolutionX = 1920, ResolutionY = 1080;
+    /// <summary>
+    /// 详情面板以 纯文字 的形式呈现
+    /// </summary>
+    private bool ShowDetailByOnlyText = true;
+    /// <summary>
+    /// 详情面板以 文字+静态图片 的形式呈现
+    /// </summary>
+    private bool ShowDetailByImg = false;
+    /// <summary>
+    /// 详情面板以 文字+3D可旋转缩放交互模型 的形式呈现
+    /// </summary>
+    private bool ShowDetailByModel = false;
+    /// <summary>
+    /// 开始界面
+    /// </summary>
+    private bool StartPanel = false;
+    /// <summary>
+    /// 设置界面
+    /// </summary>
+    private bool SettingPanel = false;
+    /// <summary>
+    /// 答题系统
+    /// </summary>
+    private bool QASystemPanel = false;
+    public override void OnGUI()
+    {
+        GUILayout.Label(Title, GetTitleStyle());
+        base.DrawBackBtn(ParentPage);
+        GUILayout.Label("Canvas参考分辨率");
+
+        GUILayout.BeginHorizontal();
+        ResolutionX = SpawnIntField("X:", ResolutionX, new Vector2(0, 9999));
+        ResolutionY = SpawnIntField("Y:", ResolutionY, new Vector2(0, 9999));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Label("点击交互所展现的详情界面形式");
+        GUILayout.BeginHorizontal();
+        ShowDetailByOnlyText = GUILayout.Toggle(ShowDetailByOnlyText, "纯文字");
+        ShowDetailByImg = GUILayout.Toggle(ShowDetailByImg, "文字+图片");
+        ShowDetailByModel = GUILayout.Toggle(ShowDetailByModel, "文字+3D可旋转缩放模型");
+        GUILayout.EndHorizontal();
+        GUILayout.Space(20);
+        GUILayout.Label("其他常见功能");
+        GUILayout.BeginHorizontal();
+        StartPanel = GUILayout.Toggle(StartPanel, "开始界面");
+        SettingPanel = GUILayout.Toggle(SettingPanel, "设置界面");
+        QASystemPanel = GUILayout.Toggle(QASystemPanel, "答题系统");
+        GUILayout.EndHorizontal();
+
+        if (GUILayout.Button("生成UI层级"))
+        {
+            if (!ShowDetailByOnlyText && !ShowDetailByImg && !ShowDetailByModel)
+            {
+                ProtectDialog("至少选择一种点击详情界面形式");
+                return;
+            }
+            SetCanvas(ResolutionX, ResolutionY);
+        }
+
+        base.DrawBottomItem(Title);
+    }
+    /// <summary>
+    /// 生成Canvas
+    /// </summary>
+    /// <param name="RX">参考分辨率X</param>
+    /// <param name="RY">参考分辨率Y</param>
+    private void SetCanvas(int RX, int RY)
+    {
+        GameObject canvasGO = GameObject.Find("MainCanvas");
+        if (canvasGO == null)
+        {
+            canvasGO = new GameObject("MainCanvas",
+            typeof(Canvas),
+            typeof(CanvasScaler),
+            typeof(GraphicRaycaster)
+            );
+        }
+
+        if (!GameObject.Find("EventSystem"))
+        {
+            GameObject EvtSystem = new GameObject("EventSystem",
+            typeof(EventSystem),
+            typeof(StandaloneInputModule)
+            );
+            Undo.RegisterCreatedObjectUndo(EvtSystem, "Create EventSystem");
+        }
+        Undo.RegisterCreatedObjectUndo(canvasGO, "Create Canvas");
+        Canvas canvas = canvasGO.GetOrAddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        CanvasScaler scaler = canvasGO.GetOrAddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(RX, RY);
+    }
+}
+/// <summary>
 /// 第一人称控制器界面
 /// </summary>
 public class FirstPersonSpawn : MainFunction
@@ -327,7 +449,6 @@ public class FirstPersonSpawn : MainFunction
         public float Jump;
     }
 }
-
 /// <summary>
 /// 交互逻辑生成控制器
 /// </summary>
