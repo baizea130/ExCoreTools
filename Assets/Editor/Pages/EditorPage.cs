@@ -1,0 +1,113 @@
+using System;
+using UnityEditor;
+using UnityEngine;
+/// <summary>
+/// 面板基类
+/// </summary>
+public abstract class EditorPage
+{
+    public virtual string Title => GetType().Name;
+    public virtual string ParentPage => null;
+    public virtual void OnEnter(object data) { }
+    public abstract void OnGUI();
+    public virtual void OnExit() { }
+    /// <summary>
+    /// 绘制返回按钮
+    /// </summary>
+    /// <param name="parent">返回目标的标题</param>
+    public virtual void DrawBackBtn(string parent)
+    {
+        if (!string.IsNullOrEmpty(parent))
+        {
+            if (GUILayout.Button($"返回 -> {parent}", GUILayout.Height(30), GUILayout.ExpandWidth(false)))
+            {
+                NavigationCore.Pop();
+            }
+        }
+    }
+    /// <summary>
+    /// 绘制底部导航栏
+    /// </summary>
+    /// <param name="title"></param>
+    public virtual void DrawBottomItem(string title)
+    {
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.BeginHorizontal(GUILayout.Height(30));
+        if (NavigationCore.Current != null)
+        {
+            var breadcrumb = NavigationCore.GetPageNavData();
+            GUILayout.Box(breadcrumb);
+            EditorGUILayout.Space(5);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    protected GUIStyle GetTitleStyle()
+    {
+        var res = new GUIStyle(EditorStyles.label);
+        res.fontSize = 24;
+        res.alignment = TextAnchor.MiddleCenter;
+        return res;
+    }
+    /// <summary>
+    /// 生成Float输入框
+    /// </summary>
+    /// <param name="description">文本描述</param>
+    /// <param name="param">外部参数</param>
+    /// <param name="bound">数值边界</param>
+    /// <param name="options">风格</param>
+    /// <returns></returns>
+    protected float SpawnFloatField(string description, float param, Vector2 bound, GUILayoutOption[] options = null)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"{description} ({bound.x}~{bound.y}) :", GUILayout.Width(NavigationCore.ToolWindow.position.width / 3));
+        param = EditorGUILayout.FloatField(param, options);
+        param = Mathf.Clamp(param, bound.x, bound.y);
+        GUILayout.EndHorizontal();
+        return param;
+    }
+    /// <summary>
+    /// 生成Int输入框
+    /// </summary>
+    /// <param name="description">文本描述</param>
+    /// <param name="param">外部参数</param>
+    /// <param name="bound">数值边界</param>
+    /// <param name="options">风格</param>
+    /// <returns></returns>
+    protected int SpawnIntField(string description, int param, Vector2 bound, GUILayoutOption[] options = null)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"{description} ({bound.x}~{bound.y}) :", GUILayout.Width(NavigationCore.ToolWindow.position.width / 3));
+        param = EditorGUILayout.IntField(param, options);
+        param = (int)Mathf.Clamp(param, bound.x, bound.y);
+        GUILayout.EndHorizontal();
+        return param;
+    }
+    /// <summary>
+    /// 在重大操作前生成的保护性弹窗，Action为空时为单纯的提示弹窗
+    /// </summary>
+    /// <param name="content">内容文本</param>
+    /// <param name="execute">点击确认后触发的功能</param>
+    protected void ProtectDialog(string content, Action execute = null)
+    {
+        bool ok;
+        if (execute == null)
+        {
+            ok = EditorUtility.DisplayDialog(
+            "提示",        // 标题
+            content,          // 内容
+            "OK我收到"          // 确定按钮文字
+            );
+            return;
+        }
+        ok = EditorUtility.DisplayDialog(
+            "提示",        // 标题
+            content,          // 内容
+            "OK我收到",           // 确定按钮文字
+            "我再想想"            // 取消按钮文字
+            );
+        if (ok)
+        {
+            execute();
+        }
+    }
+}
