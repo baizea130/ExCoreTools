@@ -24,7 +24,7 @@ public static class CSharpWriter
     {
         string input = Path.Combine(Application.dataPath, "Resources", "Config", name + ".txt");
         if (!File.Exists(input))
-            return $"配置文件 {name} 文件不存在";
+            return $"配置文件 {name} 不存在";
         string content = File.ReadAllText(input);
         foreach (var kv in replacements)
         {

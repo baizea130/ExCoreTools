@@ -1,5 +1,5 @@
 using UnityEngine;
-[RequireComponent(typeof(Collider))]
+
 public class FirstPerson : MonoBehaviour
 {
     private Camera cam;
@@ -17,7 +17,7 @@ public class FirstPerson : MonoBehaviour
         InitData();
         rb = GetComponent<Rigidbody>();
         cam = Camera.main;
-        mRayCastOffset = new Vector3(0, -GetComponent<Collider>().bounds.size.y / 2 + 0.1f);
+        mRayCastOffset = new Vector3(0, -GetComponent<CapsuleCollider>().height / 2 + 0.1f);
         int playerLayer = LayerMask.NameToLayer("Player");
         mask = ~(1 << playerLayer);
     }
@@ -47,9 +47,9 @@ public class FirstPerson : MonoBehaviour
     }
     void InitData()
     {
-        Speed = 3;
-        Jump = 3;
-        Sensitivity = 400;
-        Height = 3;
+        Speed = 5;
+        Jump = 5;
+        Sensitivity = 500;
+        Height = 2;
     }
 }

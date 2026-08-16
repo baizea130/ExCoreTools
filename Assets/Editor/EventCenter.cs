@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-public interface IEditorEvent { }
-public static class EditorEventCenter
+public interface IGameEvent { }
+public static class EventCenter
 {
     /// <summary>
     /// <para>事件字典</para>
@@ -15,7 +15,7 @@ public static class EditorEventCenter
     /// </summary>
     /// <typeparam name="T">实现IGameEvent的类，用作Dict的Key</typeparam>
     /// <param name="action">待增加的行为</param>
-    public static void AddListener<T>(Action<T> action) where T : IEditorEvent
+    public static void AddListener<T>(Action<T> action) where T : IGameEvent
     {
         Type key = typeof(T);
         if (!mEventDict.TryGetValue(key, out var item))
@@ -31,7 +31,7 @@ public static class EditorEventCenter
     /// 为事件移除监听器
     /// </summary>
     /// <param name="action">待移除的行为</param>
-    public static void RemoveListener<T>(Action<T> action) where T : IEditorEvent
+    public static void RemoveListener<T>(Action<T> action) where T : IGameEvent
     {
         Type key = typeof(T);
         if (!mEventDict.TryGetValue(key, out var item))
@@ -51,7 +51,7 @@ public static class EditorEventCenter
     /// 触发事件
     /// </summary>
     /// <param name="param">待触发的行为</param>
-    public static void TriggerEvent<T>(T param) where T : IEditorEvent
+    public static void TriggerEvent<T>(T param) where T : IGameEvent
     {
         Type key = typeof(T);
         if (!mEventDict.TryGetValue(key, out var item))

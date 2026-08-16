@@ -40,6 +40,10 @@ public abstract class EditorPage
     public virtual void OnEnter(object data) { }
     public abstract void OnGUI();
     public virtual void OnExit() { }
+    /// <summary>
+    /// 绘制返回按钮
+    /// </summary>
+    /// <param name="parent">返回目标的标题</param>
     public virtual void DrawBackBtn(string parent)
     {
         if (!string.IsNullOrEmpty(parent))
@@ -50,6 +54,10 @@ public abstract class EditorPage
             }
         }
     }
+    /// <summary>
+    /// 绘制底部导航栏
+    /// </summary>
+    /// <param name="title"></param>
     public virtual void DrawBottomItem(string title)
     {
         GUILayout.FlexibleSpace();
@@ -69,6 +77,14 @@ public abstract class EditorPage
         res.alignment = TextAnchor.MiddleCenter;
         return res;
     }
+    /// <summary>
+    /// 生成Float输入框
+    /// </summary>
+    /// <param name="description">文本描述</param>
+    /// <param name="param">外部参数</param>
+    /// <param name="bound">数值边界</param>
+    /// <param name="options">风格</param>
+    /// <returns></returns>
     protected float SpawnFloatField(string description, float param, Vector2 bound, GUILayoutOption[] options = null)
     {
         GUILayout.BeginHorizontal();
@@ -172,11 +188,15 @@ public class MenuPage_Main : MenuPage
     public override void OnGUI()
     {
         base.OnGUI();
-        GUILayout.Label("主要功能", GetTitleStyle());
+        GUILayout.Label(Title, GetTitleStyle());
         GUILayout.BeginVertical();
         {
             GUILayout.BeginHorizontal();
+            DrawButton<PlayerTempSpawn>("生成玩家预设");
             DrawButton<FirstPersonSpawn>("第一人称控制器");
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
             DrawButton<InteractableSpawn>("交互逻辑生成控制器");
             GUILayout.EndHorizontal();
         }
@@ -207,42 +227,50 @@ public class PlayerTempSpawn : MainFunction
     public override string Title => "生成玩家预设";
     public override string ParentPage => "主要功能";
     private int mSelectIndex = -1;
-    private string[] mOptions = { "胶囊体预设" };
+    private string[] mOptions = { "第一人称预设" };
     public override void OnGUI()
     {
+        GUILayout.Label(Title, GetTitleStyle());
+        base.DrawBackBtn(ParentPage);
+
         mSelectIndex = EditorGUILayout.Popup("选择玩家预设", mSelectIndex, mOptions);
         if (GUILayout.Button("生成"))
         {
             switch (mSelectIndex)
             {
+                case -1:
+                    {
+                        ProtectDialog($"未选择合法预设");
+                        return;
+                    }
                 case 0:
                     {
                         GameObject Player = GameObject.FindGameObjectWithTag("Player");
-                        if (Player != null)
+                        if (Player != null || GameObject.Find("Player") != null)
                         {
-                            ProtectDialog($"场景中已经有了Player标签的物体\n名称：{Player.name}\n将使用此物体作为基准"
-                            , () => { InitComponent(Player); return; }
+                            ProtectDialog($"场景中已经有了Player标签或名为Player的物体\n名称：{Player.name}\n请使用此物体作为基准或者删除之"
                             );
-                        }
-                        Player = GameObject.Find("Player");
-                        if (Player != null)
-                        {
-                            ProtectDialog($"场景中已经有了名为Player的物体\n将使用此物体作为基准"
-                            , () => { InitComponent(Player); return; }
-                            );
+                            break;
                         }
                         Player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                        InitComponent(Player);
+                        InitComponent(Player, mSelectIndex);
                         break;
                     }
                 default: break;
             }
         }
+        base.DrawBottomItem(Title);
     }
-    private void InitComponent(GameObject temp)
+    private void InitComponent(GameObject temp, int select)
     {
+        temp.name = "Player";
+        temp.tag = "Player";
         var rb = temp.GetOrAddComponent<Rigidbody>();
         var collider = temp.GetOrAddComponent<Collider>();
+        if (select == 0)
+        {
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+        }
     }
 }
 /// <summary>
@@ -256,7 +284,7 @@ public class FirstPersonSpawn : MainFunction
     private GameObject Player;
     public override void OnGUI()
     {
-        GUILayout.Label("第一人称控制器", GetTitleStyle());
+        GUILayout.Label(Title, GetTitleStyle());
         base.DrawBackBtn(ParentPage);
 
         Player = EditorGUILayout.ObjectField(
@@ -309,7 +337,7 @@ public class InteractableSpawn : MainFunction
     public override string ParentPage => "主要功能";
     public override void OnGUI()
     {
-        GUILayout.Label("交互逻辑生成控制器", GetTitleStyle());
+        GUILayout.Label(Title, GetTitleStyle());
         base.DrawBackBtn(ParentPage);
 
 

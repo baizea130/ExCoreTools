@@ -9,7 +9,7 @@ public static class NavigationCore
     /// <summary>
     /// 导航界面堆栈
     /// </summary>
-    public static Stack<EditorPage> PageStack = new Stack<EditorPage>();
+    public static Stack<EditorPage> PageStack { get; private set; }  = new Stack<EditorPage>();
     public static EditorWindow ToolWindow { get; private set; }
     public static EditorPage Current => PageStack.Count > 0 ? PageStack.Peek() : null;
     public static void Init(EditorWindow window, EditorPage root)
