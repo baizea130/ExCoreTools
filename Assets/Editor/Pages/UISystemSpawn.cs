@@ -18,13 +18,25 @@ public class UISystemSpawn : MainFunction
     /// </summary>
     private bool ShowDetailByOnlyText = false;
     /// <summary>
+    /// 点击后展现 纯文字 的物体标签
+    /// </summary>
+    private string ShowDetailByOnlyTextTag;
+    /// <summary>
     /// 详情面板以 文字+静态图片 的形式呈现
     /// </summary>
     private bool ShowDetailByImg = false;
     /// <summary>
+    /// 点击后展现 文字+静态图片 的物体标签
+    /// </summary>
+    private string ShowDetailByImgTag;
+    /// <summary>
     /// 详情面板以 文字+3D可旋转缩放交互模型 的形式呈现
     /// </summary>
     private bool ShowDetailByModel = false;
+    /// <summary>
+    /// 点击后展现 文字+3D可旋转缩放交互模型 的物体标签
+    /// </summary>
+    private string ShowDetailByModelTag;
     /// <summary>
     /// 开始界面
     /// </summary>
@@ -53,7 +65,7 @@ public class UISystemSpawn : MainFunction
     }
     private void ReadConfig()
     {
-        StartPanel = MethodExtensions.CreateSO<GameFlowConfig>().StartPanel;
+        StartPanel = MethodExtensions.CreateSO<ToolConfig>().StartPanel;
     }
     public override void OnGUI()
     {
@@ -84,7 +96,8 @@ public class UISystemSpawn : MainFunction
         QASystemPanel = GUILayout.Toggle(QASystemPanel, "答题系统");
         GUILayout.EndHorizontal();
         GUILayout.EndScrollView();
-        if (GUILayout.Button("生成UI层级"))
+        GUI.contentColor = Color.yellow;
+        if (GUILayout.Button("生成UI层级", GUILayout.Height(30)))
         {
 
             if (!ShowDetailByOnlyText && !ShowDetailByImg && !ShowDetailByModel)
@@ -96,11 +109,10 @@ public class UISystemSpawn : MainFunction
             {
                 SetUILayouts(SetCanvas(ResolutionX, ResolutionY));//创建Canvas和设置UI图层
                 SetUiManager();
-
             }
             );
         }
-
+        GUI.contentColor = Color.white;
 
         base.DrawBottomItem(Title);
     }
@@ -168,7 +180,7 @@ public class UISystemSpawn : MainFunction
         }
         List<GameObject> target = new List<GameObject>() { uiManager };
         CSharpWriter.Write("uiManager", null, target);
-        MethodExtensions.CreateSO<GameFlowConfig>().StartPanel = StartPanel;
+        MethodExtensions.CreateSO<ToolConfig>().StartPanel = StartPanel;
     }
     /// <summary>
     /// 根据详情勾选框的内容进行拓展
@@ -179,7 +191,31 @@ public class UISystemSpawn : MainFunction
         {
             GUILayout.Space(15);
             DetailPanelBG = EditorGUILayout.ObjectField("详情界面背景Sprite", DetailPanelBG, typeof(Sprite), true) as Sprite;
+            CheckFieldEmpty(DetailPanelBG);
+            GUILayout.Space(15);
             DetailPanelBackBtn = EditorGUILayout.ObjectField("详情界面关闭按钮Sprite", DetailPanelBackBtn, typeof(Sprite), true) as Sprite;
+            CheckFieldEmpty(DetailPanelBackBtn);
+            GUILayout.Space(25);
+            if (ShowDetailByOnlyText)
+            {
+                GUILayout.Label("点击后展示纯文本的物体标签：");
+                ShowDetailByOnlyTextTag = EditorGUILayout.TextField("", ShowDetailByOnlyTextTag, GUILayout.ExpandWidth(true));
+                CheckFieldEmpty(ShowDetailByOnlyTextTag, "*请确保编辑器中有同名标签");
+            }
+            if (ShowDetailByImg)
+            {
+                GUILayout.Space(15);
+                GUILayout.Label("点击后展示 文本+图片 的物体标签：");
+                ShowDetailByImgTag = EditorGUILayout.TextField("", ShowDetailByImgTag, GUILayout.ExpandWidth(true));
+                CheckFieldEmpty(ShowDetailByImgTag, "*请确保编辑器中有同名标签");
+            }
+            if (ShowDetailByModel)
+            {
+                GUILayout.Space(15);
+                GUILayout.Label("点击后展示 文本+3D模型 的物体标签：");
+                ShowDetailByModelTag = EditorGUILayout.TextField("", ShowDetailByModelTag, GUILayout.ExpandWidth(true));
+                CheckFieldEmpty(ShowDetailByModelTag, "*请确保编辑器中有同名标签");
+            }
         }
     }
 }

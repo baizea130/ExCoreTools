@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c16c6efa2a70e5438f55069167ec379, type: 3}
-  m_Name: GameFlowConfig
+  m_Name: ToolConfig
   m_EditorClassIdentifier: 
   StartPanel: 0

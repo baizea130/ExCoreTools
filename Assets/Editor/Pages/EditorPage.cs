@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEditor.Search;
 using UnityEngine;
 /// <summary>
 /// 面板基类
@@ -109,5 +110,33 @@ public abstract class EditorPage
         {
             execute();
         }
+    }
+    /// <summary>
+    /// 检查输入标签的输入框是否为空
+    /// </summary>
+    /// <param name="content">输入框中的字符串</param>
+    /// <param name="fullTip">填了字段后显示的提示</param>
+    /// <returns>是否为空</returns>
+    protected bool CheckFieldEmpty(object content, string fullTip = null)
+    {
+        bool empty = content == null
+            || (content is string s && string.IsNullOrWhiteSpace(s))
+            || (content is UnityEngine.Object o && o == null);
+
+        if (empty)
+        {
+            GUI.contentColor = Color.red;
+            GUILayout.Label("*输入的内容为空");
+            GUI.contentColor = Color.white;
+            return true;
+        }
+
+        if (!string.IsNullOrEmpty(fullTip))
+        {
+            GUI.contentColor = Color.yellow;
+            GUILayout.Label(fullTip);
+            GUI.contentColor = Color.white;
+        }
+        return false;
     }
 }

@@ -7,7 +7,7 @@ public class PlayerTempSpawn : MainFunction
 {
     public override string Title => "生成玩家预设";
     public override string ParentPage => "主要功能";
-    private int mSelectIndex = -1;
+    private int mSelectIndex = 0;
     private string[] mOptions = { "第一人称预设" };
     public override void OnGUI()
     {

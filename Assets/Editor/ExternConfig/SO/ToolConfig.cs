@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameFlowConfig : ScriptableObject
+public class ToolConfig : ScriptableObject
 {
     public bool StartPanel;
 }

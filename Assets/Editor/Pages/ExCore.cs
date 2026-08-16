@@ -32,7 +32,7 @@ public class ExCore : EditorWindow
     {
         Dictionary<string, string> replacement = new Dictionary<string, string>();
         replacement.Add("StartPanel", string.Empty);
-        if (MethodExtensions.CreateSO<GameFlowConfig>().StartPanel == true)
+        if (MethodExtensions.CreateSO<ToolConfig>().StartPanel == true)
         {
             replacement["StartPanel"] = "EventCenter.TriggerEvent(new InstantiateUIPanel{resourcesName = \"StartUIRoot\",rootLayout = \"MidLayout\"});";
         }

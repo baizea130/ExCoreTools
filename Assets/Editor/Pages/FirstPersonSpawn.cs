@@ -18,6 +18,7 @@ public class FirstPersonSpawn : MainFunction
 
         Player = EditorGUILayout.ObjectField(
        "场景中的玩家预制体", Player, typeof(GameObject), true) as GameObject;
+        CheckFieldEmpty(Player);
         data.Speed = SpawnFloatField("移动速度", data.Speed, new Vector2(0, 999));
         data.Height = SpawnFloatField("模型身高", data.Height, new Vector2(0, 999));
         data.Jump = SpawnFloatField("跳跃高度", data.Jump, new Vector2(0, 999));
