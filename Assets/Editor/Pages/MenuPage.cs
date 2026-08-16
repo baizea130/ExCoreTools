@@ -16,13 +16,9 @@ public class MenuPage : EditorPage
         {
             Application.OpenURL("https://ecn1466ik8jj.feishu.cn/wiki/K604wEQpMimrJLkXtAOcthUaneg");
         }
-        GUI.contentColor = Color.white;
         GUILayout.EndHorizontal();
-        GUI.backgroundColor = Color.black;
-
+        GUI.contentColor = Color.white;
         GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(2));
-
-        GUI.backgroundColor = Color.white;
     }
     private void DrawButtonsOnTop<T>(string name) where T : EditorPage, new()
     {

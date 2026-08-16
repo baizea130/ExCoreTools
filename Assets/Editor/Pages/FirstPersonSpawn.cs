@@ -26,7 +26,7 @@ public class FirstPersonSpawn : MainFunction
         {
             if (Player == null)
             {
-                ProtectDialog("你忘记绑定场景中的玩家了");
+                ProtectDialog("未绑定场景中的玩家预制体");
             }
             else
             {
@@ -34,10 +34,10 @@ public class FirstPersonSpawn : MainFunction
                 {
                     var replacements = new Dictionary<string, string>
                     {
-                                    { "Speed",       data.Speed.ToString() },
-                                    { "Jump",        data.Jump.ToString() },
-                                    { "Sensitivity", data.Sensitivity.ToString() },
-                                    { "Height",      data.Height.ToString() }
+                        { "Speed",       data.Speed.ToString() },
+                        { "Jump",        data.Jump.ToString() },
+                        { "Sensitivity", data.Sensitivity.ToString() },
+                        { "Height",      data.Height.ToString() }
                     };
                     List<GameObject> target = new List<GameObject> { Player };
                     Debug.Log(CSharpWriter.Write("FirstPerson", replacements, target));

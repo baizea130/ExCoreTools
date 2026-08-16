@@ -1,14 +1,44 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 public class ExCore : EditorWindow
 {
-    [MenuItem("Tools/生成配置文件", false, 0)]
-    public static void InitConfig()
+
+    [MenuItem("Tools/生成局内框架脚本", false, 0)]
+    public static void InitBaseObj()
     {
-        CSharpWriter.Write("MethodExtensions");
+        CSharpWriter.Write("EventCenter");
+        CSharpWriter.Write("Singleton");
+        CSharpWriter.Write("GameEvents");
     }
-    [MenuItem("Tools/ExCore", false, 1)]
+    [MenuItem("Tools/应用场景框架配置", false, 20)]
+    public static void InitSceneObj()
+    {
+        GameObject gameManager = GameObject.Find("GameManager");
+        if (gameManager == null)
+        {
+            gameManager = new GameObject("GameManager");
+        }
+        List<GameObject> target = new List<GameObject> { gameManager };
+
+        CSharpWriter.Write("GameManager", GetReplaceDict(), target);
+    }
+    /// <summary>
+    /// 获取在InitSceneObj中替换的字符串字典
+    /// </summary>
+    /// <returns></returns>
+    private static Dictionary<string, string> GetReplaceDict()
+    {
+        Dictionary<string, string> replacement = new Dictionary<string, string>();
+        replacement.Add("StartPanel", string.Empty);
+        if (MethodExtensions.CreateSO<GameFlowConfig>().StartPanel == true)
+        {
+            replacement["StartPanel"] = "EventCenter.TriggerEvent(new InstantiateUIPanel{resourcesName = \"StartUIRoot\",rootLayout = \"MidLayout\"});";
+        }
+        return replacement;
+    }
+    [MenuItem("Tools/ExCore", false, 99)]
     public static void ShowWindow()
     {
         var window = GetWindow<ExCore>();

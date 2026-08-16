@@ -1,0 +1,25 @@
+using UnityEngine;
+/// <summary>
+/// 单例基类
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public abstract class Singleton <T> : MonoBehaviour where T : Singleton<T>
+{
+    public static T INSTANCE { get; private set; }
+
+    protected virtual void Awake()
+    {
+        if (INSTANCE != null && INSTANCE != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        INSTANCE = (T)this;
+        DontDestroyOnLoad(INSTANCE);
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (INSTANCE == this) INSTANCE = null;
+    }
+}

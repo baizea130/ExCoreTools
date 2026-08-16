@@ -26,10 +26,13 @@ public static class CSharpWriter
         if (!File.Exists(input))
             return $"配置文件 {name} 不存在";
         string content = File.ReadAllText(input);
-        foreach (var kv in replacements)
+        if (replacements != null)
         {
-            string tag = $"<rep>{kv.Key}</rep>";
-            content = content.Replace(tag, kv.Value);
+            foreach (var kv in replacements)
+            {
+                string tag = $"<rep>{kv.Key}</rep>";
+                content = content.Replace(tag, kv.Value);
+            }
         }
         Directory.CreateDirectory($"{Application.dataPath}/Generate");
         string output = $"{Application.dataPath}/Generate/{name}.cs";
@@ -52,9 +55,10 @@ public static class CSharpWriter
             }
         }
         AssetDatabase.Refresh();
+        OnScriptLoadFinished();
         return "生成成功";
     }
-     /// <summary>
+    /// <summary>
     /// 将文本文件(不包含可替换字段)转化为CS脚本
     /// </summary>
     /// <param name="name">脚本名称</param>
@@ -71,6 +75,7 @@ public static class CSharpWriter
         string output = $"{Application.dataPath}/Generate/{name}.cs";
         File.WriteAllText(output, content);
         AssetDatabase.Refresh();
+        OnScriptLoadFinished();
         return "生成成功";
     }
     /// <summary>
@@ -99,7 +104,7 @@ public static class CSharpWriter
     /// <summary>
     /// 根据类名查找 MonoBehaviour 类型
     /// </summary>
-    public static Type FindMonoBehaviour(string className)
+    private static Type FindMonoBehaviour(string className)
     {
         // 常见程序集顺序查找
         string[] assemblies = new[]

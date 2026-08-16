@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// UI系统控制器
 /// </summary>
-public class UISystemSwawn : MainFunction
+public class UISystemSpawn : MainFunction
 {
     #region 基础属性
     public override string Title => "生成UI预设";
@@ -38,8 +39,22 @@ public class UISystemSwawn : MainFunction
     private bool QASystemPanel = false;
     private Vector2 scrollPos;
     #endregion
-    public Sprite PanelBG;
-    public Sprite PanelBackBtn;
+    /// <summary>
+    /// 展示物品详情界面的背景图
+    /// </summary>
+    public Sprite DetailPanelBG;
+    /// <summary>
+    /// 展示物品详情界面的返回按钮图形
+    /// </summary>
+    public Sprite DetailPanelBackBtn;
+    public override void OnEnter(object data)
+    {
+        ReadConfig();
+    }
+    private void ReadConfig()
+    {
+        StartPanel = MethodExtensions.CreateSO<GameFlowConfig>().StartPanel;
+    }
     public override void OnGUI()
     {
         GUILayout.Label(Title, GetTitleStyle());
@@ -68,9 +83,10 @@ public class UISystemSwawn : MainFunction
         SettingPanel = GUILayout.Toggle(SettingPanel, "设置界面");
         QASystemPanel = GUILayout.Toggle(QASystemPanel, "答题系统");
         GUILayout.EndHorizontal();
-
+        GUILayout.EndScrollView();
         if (GUILayout.Button("生成UI层级"))
         {
+
             if (!ShowDetailByOnlyText && !ShowDetailByImg && !ShowDetailByModel)
             {
                 ProtectDialog("至少选择一种点击详情界面形式");
@@ -78,11 +94,13 @@ public class UISystemSwawn : MainFunction
             }
             ProtectDialog("即将按上述配置生成UI框架", () =>
             {
-                SetUILayouts(SetCanvas(ResolutionX, ResolutionY));
+                SetUILayouts(SetCanvas(ResolutionX, ResolutionY));//创建Canvas和设置UI图层
+                SetUiManager();
+
             }
             );
         }
-        GUILayout.EndScrollView();
+
 
         base.DrawBottomItem(Title);
     }
@@ -141,6 +159,17 @@ public class UISystemSwawn : MainFunction
             item.GetOrAddComponent<RectTransform>().sizeDelta = new Vector2(ResolutionX, ResolutionY);
         }
     }
+    private void SetUiManager()
+    {
+        GameObject uiManager = GameObject.Find("uiManager");
+        if (uiManager == null)
+        {
+            uiManager = new GameObject("uiManager");
+        }
+        List<GameObject> target = new List<GameObject>() { uiManager };
+        CSharpWriter.Write("uiManager", null, target);
+        MethodExtensions.CreateSO<GameFlowConfig>().StartPanel = StartPanel;
+    }
     /// <summary>
     /// 根据详情勾选框的内容进行拓展
     /// </summary>
@@ -148,8 +177,9 @@ public class UISystemSwawn : MainFunction
     {
         if (ShowDetailByOnlyText || ShowDetailByImg || ShowDetailByModel)
         {
-            PanelBG = EditorGUILayout.ObjectField("详情界面背景Sprite", PanelBG, typeof(Sprite), true) as Sprite;
-            PanelBackBtn = EditorGUILayout.ObjectField("详情界面关闭按钮Sprite", PanelBackBtn, typeof(Sprite), true) as Sprite;
+            GUILayout.Space(15);
+            DetailPanelBG = EditorGUILayout.ObjectField("详情界面背景Sprite", DetailPanelBG, typeof(Sprite), true) as Sprite;
+            DetailPanelBackBtn = EditorGUILayout.ObjectField("详情界面关闭按钮Sprite", DetailPanelBackBtn, typeof(Sprite), true) as Sprite;
         }
     }
 }

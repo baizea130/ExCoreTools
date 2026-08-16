@@ -1,0 +1,10 @@
+public struct InstantiateUIPanel : IGameEvent
+{
+    public string resourcesName;
+    public string rootLayout;
+
+}
+public struct DestroyUIPanel : IGameEvent
+{
+    public string resourcesName;
+}

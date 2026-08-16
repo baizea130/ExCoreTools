@@ -1,0 +1,41 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class uiManager : Singleton<uiManager>
+{
+    [SerializeField] RectTransform BottomLayout;
+    [SerializeField] RectTransform MidLayout;
+    [SerializeField] RectTransform TopLayout;
+    private Dictionary<string, RectTransform> Layouts = new Dictionary<string, RectTransform>();
+    void OnEnable()
+    {
+        Init();
+        EventCenter.AddListener<InstantiateUIPanel>(OnInstantiateUIPanel);
+        EventCenter.AddListener<DestroyUIPanel>(OnDestroyUIPanel);
+    }
+    void Init()
+    {
+        Layouts.Clear();
+        BottomLayout = GameObject.Find("BottomLayout").GetComponent<RectTransform>();
+        MidLayout = GameObject.Find("MidLayout").GetComponent<RectTransform>();
+        TopLayout = GameObject.Find("TopLayout").GetComponent<RectTransform>();
+        Layouts.Add("BottomLayout", BottomLayout);
+        Layouts.Add("MidLayout", MidLayout);
+        Layouts.Add("TopLayout", TopLayout);
+    }
+    private void OnInstantiateUIPanel(InstantiateUIPanel evt)
+    {
+        var path = "uiPrefabs/" + evt.resourcesName;
+        GameObject temp = Instantiate(Resources.Load<GameObject>(path),Layouts[evt.rootLayout]);
+        if (temp == null) { Debug.LogError(path + "不存在"); }
+    }
+    private void OnDestroyUIPanel(DestroyUIPanel evt)
+    {
+        Destroy(GameObject.Find(evt.resourcesName));
+    }
+    void OnDisable()
+    {
+        EventCenter.RemoveListener<InstantiateUIPanel>(OnInstantiateUIPanel);
+        EventCenter.RemoveListener<DestroyUIPanel>(OnDestroyUIPanel);
+    }
+}

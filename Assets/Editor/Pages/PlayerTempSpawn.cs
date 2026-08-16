@@ -26,14 +26,16 @@ public class PlayerTempSpawn : MainFunction
                     }
                 case 0:
                     {
-                        GameObject Player = GameObject.FindGameObjectWithTag("Player");
-                        if (Player != null || GameObject.Find("Player") != null)
+                        GameObject byTag = GameObject.FindGameObjectWithTag("Player");
+                        GameObject byName = GameObject.Find("Player");
+                        GameObject existing = byTag ?? byName;
+                        if (existing != null)
                         {
-                            ProtectDialog($"场景中已经有了Player标签或名为Player的物体\n名称：{Player.name}\n请使用此物体作为基准或者删除之"
+                            ProtectDialog($"场景中已经有了Player标签或名为Player的物体\n名称：{existing.name}\n请使用此物体作为基准或者删除之"
                             );
                             break;
                         }
-                        Player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                        GameObject Player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                         InitComponent(Player, mSelectIndex);
                         break;
                     }
