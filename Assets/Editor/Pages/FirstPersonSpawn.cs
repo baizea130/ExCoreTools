@@ -9,8 +9,16 @@ public class FirstPersonSpawn : MainFunction
 {
     public override string Title => "第一人称控制器";
     public override string ParentPage => "主要功能";
-    private PlayerData data = new PlayerData();
+    public float Speed;
+    public float Height;
+    public float Sensitivity;
+    public float Jump;
     private GameObject Player;
+    public bool HidePlayerLayout;
+    public override void OnEnter(object data)
+    {
+        ReadConfig();
+    }
     public override void OnGUI()
     {
         GUILayout.Label(Title, GetTitleStyle());
@@ -19,10 +27,11 @@ public class FirstPersonSpawn : MainFunction
         Player = EditorGUILayout.ObjectField(
        "场景中的玩家预制体", Player, typeof(GameObject), true) as GameObject;
         CheckFieldEmpty(Player);
-        data.Speed = SpawnFloatField("移动速度", data.Speed, new Vector2(0, 999));
-        data.Height = SpawnFloatField("模型身高", data.Height, new Vector2(0, 999));
-        data.Jump = SpawnFloatField("跳跃高度", data.Jump, new Vector2(0, 999));
-        data.Sensitivity = SpawnFloatField("视角灵敏度", data.Sensitivity, new Vector2(1, 9999));
+        HidePlayerLayout = GUILayout.Toggle(HidePlayerLayout, "主摄像机隐藏 Player 图层");
+        Speed = SpawnFloatField("移动速度", Speed, new Vector2(0, 999));
+        Height = SpawnFloatField("模型身高", Height, new Vector2(0, 999));
+        Jump = SpawnFloatField("跳跃高度", Jump, new Vector2(0, 999));
+        Sensitivity = SpawnFloatField("视角灵敏度", Sensitivity, new Vector2(1, 9999));
         if (GUILayout.Button("确认生成"))
         {
             if (Player == null)
@@ -33,27 +42,52 @@ public class FirstPersonSpawn : MainFunction
             {
                 ProtectDialog("即将生成/覆盖第一人称控制器脚本并自动附加", () =>
                 {
+                    if (HidePlayerLayout)
+                    {
+                        HideLayer();
+                    }
+                    else
+                    {
+                        ShowLayer();
+                    }
                     var replacements = new Dictionary<string, string>
                     {
-                        { "Speed",       data.Speed.ToString() },
-                        { "Jump",        data.Jump.ToString() },
-                        { "Sensitivity", data.Sensitivity.ToString() },
-                        { "Height",      data.Height.ToString() }
+                        { "Speed",       Speed.ToString() },
+                        { "Jump",        Jump.ToString() },
+                        { "Sensitivity", Sensitivity.ToString() },
+                        { "Height",      Height.ToString() }
                     };
                     List<GameObject> target = new List<GameObject> { Player };
                     Debug.Log(CSharpWriter.Write("FirstPerson", replacements, target));
+                    WriteConfig();
                 });
             }
         }
 
         base.DrawBottomItem(Title);
     }
-    [Serializable]
-    private class PlayerData
+    /// <summary>屏蔽图层</summary>
+    public void HideLayer()
     {
-        public float Speed;
-        public float Height;
-        public float Sensitivity;
-        public float Jump;
+        int layer = LayerMask.NameToLayer("Player");
+        if (layer == -1)
+        {
+            ProtectDialog($"图层 '{Player}' 不存在！");
+            return;
+        }
+        Camera.main.cullingMask &= ~(1 << layer);
     }
+
+    /// <summary>解除屏蔽图层</summary>
+    public void ShowLayer()
+    {
+        int layer = LayerMask.NameToLayer("Player");
+        if (layer == -1)
+        {
+            ProtectDialog($"图层 '{Player}' 不存在！");
+            return;
+        }
+        Camera.main.cullingMask |= 1 << layer;
+    }
+
 }

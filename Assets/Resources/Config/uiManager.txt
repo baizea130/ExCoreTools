@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class uiManager : Singleton<uiManager>
 {
@@ -10,8 +12,8 @@ public class uiManager : Singleton<uiManager>
     void OnEnable()
     {
         Init();
-        EventCenter.AddListener<InstantiateUIPanel>(OnInstantiateUIPanel);
-        EventCenter.AddListener<DestroyUIPanel>(OnDestroyUIPanel);
+        EventCenter.AddListener<InstantiateUIPanelEvent>(OnInstantiateUIPanel);
+        EventCenter.AddListener<DestroyUIPanelEvent>(OnDestroyUIPanel);
     }
     void Init()
     {
@@ -23,19 +25,24 @@ public class uiManager : Singleton<uiManager>
         Layouts.Add("MidLayout", MidLayout);
         Layouts.Add("TopLayout", TopLayout);
     }
-    private void OnInstantiateUIPanel(InstantiateUIPanel evt)
+    private void OnInstantiateUIPanel(InstantiateUIPanelEvent evt)
     {
         var path = "uiPrefabs/" + evt.resourcesName;
-        GameObject temp = Instantiate(Resources.Load<GameObject>(path),Layouts[evt.rootLayout]);
+        GameObject temp = Instantiate(Resources.Load<GameObject>(path), Layouts[evt.rootLayout]);
         if (temp == null) { Debug.LogError(path + "不存在"); }
     }
-    private void OnDestroyUIPanel(DestroyUIPanel evt)
+    private void OnDestroyUIPanel(DestroyUIPanelEvent evt)
     {
         Destroy(GameObject.Find(evt.resourcesName));
     }
     void OnDisable()
     {
-        EventCenter.RemoveListener<InstantiateUIPanel>(OnInstantiateUIPanel);
-        EventCenter.RemoveListener<DestroyUIPanel>(OnDestroyUIPanel);
+        EventCenter.RemoveListener<InstantiateUIPanelEvent>(OnInstantiateUIPanel);
+        EventCenter.RemoveListener<DestroyUIPanelEvent>(OnDestroyUIPanel);
+    }
+    public void BtnExtra(Button btn, Action action)
+    {
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(() => action());
     }
 }

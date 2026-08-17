@@ -1,6 +1,5 @@
 using System;
 using UnityEditor;
-using UnityEditor.Search;
 using UnityEngine;
 /// <summary>
 /// 面板基类
@@ -37,7 +36,7 @@ public abstract class EditorPage
         if (NavigationCore.Current != null)
         {
             var breadcrumb = NavigationCore.GetPageNavData();
-            GUILayout.Box(breadcrumb);
+            GUILayout.Label(breadcrumb);
             EditorGUILayout.Space(5);
         }
         EditorGUILayout.EndHorizontal();
@@ -138,5 +137,16 @@ public abstract class EditorPage
             GUI.contentColor = Color.white;
         }
         return false;
+    }
+    protected void ReadConfig()
+    {
+        ToolConfig config = MethodExtensions.CreateSO<ToolConfig>();
+        MethodExtensions.AutoMap(this, config);
+    }
+    protected void WriteConfig()
+    {
+        ToolConfig config = MethodExtensions.CreateSO<ToolConfig>();
+        MethodExtensions.AutoMap(config, this);
+        EditorUtility.SetDirty(config);
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -62,10 +61,10 @@ public class UISystemSpawn : MainFunction
     public override void OnEnter(object data)
     {
         ReadConfig();
-    }
-    private void ReadConfig()
-    {
-        StartPanel = MethodExtensions.CreateSO<ToolConfig>().StartPanel;
+        if (ResolutionX == 0 || ResolutionY == 0)
+        {
+            ResolutionX = 1920; ResolutionY = 1080;
+        }
     }
     public override void OnGUI()
     {
@@ -180,7 +179,7 @@ public class UISystemSpawn : MainFunction
         }
         List<GameObject> target = new List<GameObject>() { uiManager };
         CSharpWriter.Write("uiManager", null, target);
-        MethodExtensions.CreateSO<ToolConfig>().StartPanel = StartPanel;
+        WriteConfig();
     }
     /// <summary>
     /// 根据详情勾选框的内容进行拓展

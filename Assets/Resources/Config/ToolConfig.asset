@@ -12,4 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c16c6efa2a70e5438f55069167ec379, type: 3}
   m_Name: ToolConfig
   m_EditorClassIdentifier: 
-  StartPanel: 0
+  ResolutionX: 1920
+  ResolutionY: 1080
+  ShowDetailByOnlyText: 0
+  ShowDetailByImg: 1
+  ShowDetailByModel: 0
+  StartPanel: 1
+  SettingPanel: 0
+  QASystemPanel: 0
+  ShowDetailByOnlyTextTag: 
+  ShowDetailByImgTag: 
+  ShowDetailByModelTag: 
+  DetailPanelBG: {fileID: 0}
+  DetailPanelBackBtn: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  HidePlayerLayout: 0
+  Speed: 3
+  Height: 3
+  Sensitivity: 700
+  Jump: 3

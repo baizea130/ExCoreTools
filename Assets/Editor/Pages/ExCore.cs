@@ -34,7 +34,7 @@ public class ExCore : EditorWindow
         replacement.Add("StartPanel", string.Empty);
         if (MethodExtensions.CreateSO<ToolConfig>().StartPanel == true)
         {
-            replacement["StartPanel"] = "EventCenter.TriggerEvent(new InstantiateUIPanel{resourcesName = \"StartUIRoot\",rootLayout = \"MidLayout\"});";
+            replacement["StartPanel"] = "EventCenter.TriggerEvent(new InstantiateUIPanelEvent{resourcesName = \"StartUIRoot\",rootLayout = \"MidLayout\"});";
         }
         return replacement;
     }

@@ -3,10 +3,10 @@ using UnityEngine;
 public class FirstPerson : MonoBehaviour
 {
     private Camera cam;
-    private float Speed = 5f;
-    private float Jump = 8f;
-    private float Sensitivity = 2f;
-    private float Height = 1.6f;
+    private float Speed;
+    private float Jump;
+    private float Sensitivity;
+    private float Height;
     private float rotX;
     private Rigidbody rb;
     private Vector3 mRayCastOffset;

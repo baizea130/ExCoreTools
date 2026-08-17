@@ -1,0 +1,25 @@
+using UnityEngine;
+using UnityEngine.UI;
+public class StartUIRoot : MonoBehaviour
+{
+    public RectTransform StartPanelBG;
+    public Button StartBtn;
+    private void OnEnable()
+    {
+        EventCenter.AddListener<GameStartEvent>(OnGameStartEvent);
+    }
+    void Start()
+    {
+        StartPanelBG = GameObject.Find("StartPanelBG").GetComponent<RectTransform>();
+        StartBtn = GameObject.Find("StartBtn").GetComponent<Button>();
+        uiManager.INSTANCE.BtnExtra(StartBtn, () => EventCenter.TriggerEvent(new GameStartEvent { }));
+    }
+    void OnGameStartEvent(GameStartEvent evt)
+    {
+        Destroy(StartPanelBG.gameObject);
+    }
+    private void OnDisable()
+    {
+        EventCenter.RemoveListener<GameStartEvent>(OnGameStartEvent);
+    }
+}

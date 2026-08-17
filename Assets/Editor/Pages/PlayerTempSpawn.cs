@@ -48,6 +48,15 @@ public class PlayerTempSpawn : MainFunction
     {
         temp.name = "Player";
         temp.tag = "Player";
+        int layer = LayerMask.NameToLayer("Player");
+        if (layer == -1)
+        {
+            ProtectDialog($"图层 'Player' 不存在，无法自动设置，请添加图层后手动设置或再次生成预设");
+        }
+        else
+        {
+            temp.layer = layer;
+        }
         var rb = temp.GetOrAddComponent<Rigidbody>();
         var collider = temp.GetOrAddComponent<Collider>();
         if (select == 0)
