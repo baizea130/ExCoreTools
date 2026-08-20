@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.UI;
 using System;
+using System.Runtime.CompilerServices;
+using System.IO;
+
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -84,5 +88,14 @@ public static class MethodExtensions
             }
             t = t.BaseType;
         }
+    }
+    public static void Execute(string token, [CallerFilePath] string src = "", [CallerLineNumber] int line = -1)
+    {
+        string fileName = Path.GetFileNameWithoutExtension(src);
+        InternalCall(token, fileName, line);
+    }
+    private static void InternalCall(string token, string fileName, int line)
+    {
+        Debug.Log($"{token}:{fileName}:{line}");
     }
 }

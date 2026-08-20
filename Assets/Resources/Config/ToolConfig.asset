@@ -18,7 +18,7 @@ MonoBehaviour:
   ShowDetailByImg: 1
   ShowDetailByModel: 0
   StartPanel: 1
-  SettingPanel: 0
+  SettingPanel: 1
   QASystemPanel: 0
   ShowDetailByOnlyTextTag: 
   ShowDetailByImgTag: 

@@ -3,16 +3,16 @@ using UnityEngine;
 public class ToolConfig : ScriptableObject
 {
     [Header("UI预设配置")]
-    public int ResolutionX;
-    public int ResolutionY;
-    public bool ShowDetailByOnlyText, ShowDetailByImg, ShowDetailByModel;
-    public bool StartPanel, SettingPanel, QASystemPanel;
-    public string ShowDetailByOnlyTextTag, ShowDetailByImgTag, ShowDetailByModelTag;
-    public Sprite DetailPanelBG, DetailPanelBackBtn;
+    [ReadOnly] public int ResolutionX;
+    [ReadOnly] public int ResolutionY;
+    [ReadOnly] public bool ShowDetailByOnlyText, ShowDetailByImg, ShowDetailByModel;
+    [ReadOnly] public bool StartPanel, SettingPanel, QASystemPanel;
+    [ReadOnly] public string ShowDetailByOnlyTextTag, ShowDetailByImgTag, ShowDetailByModelTag;
+    [ReadOnly] public Sprite DetailPanelBG, DetailPanelBackBtn;
     [Header("玩家数值配置")]
-    public bool HidePlayerLayout;
-    public float Speed;
-    public float Height;
-    public float Sensitivity;
-    public float Jump;
+    [ReadOnly] public bool HidePlayerLayout;
+    [ReadOnly] public float Speed;
+    [ReadOnly] public float Height;
+    [ReadOnly] public float Sensitivity;
+    [ReadOnly] public float Jump;
 }

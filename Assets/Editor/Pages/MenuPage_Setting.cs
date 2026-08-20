@@ -25,6 +25,10 @@ public class MenuPage_Setting : MenuPage
             GUILayout.Label("*未检测到DG.Tween相关文件，请自行安装或取消勾选");
             GUI.contentColor = Color.white;
         }
+        if (GUILayout.Button("测试"))
+        {
+            MethodExtensions.Execute("123");
+        }
         base.DrawBottomItem(Title);
     }
     private static bool HasDOTweenInAssets()

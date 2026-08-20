@@ -106,7 +106,6 @@ public static class CSharpWriter
     /// </summary>
     private static Type FindMonoBehaviour(string className)
     {
-        // 常见程序集顺序查找
         string[] assemblies = new[]
         {
             "Assembly-CSharp",           // 普通脚本
@@ -120,7 +119,6 @@ public static class CSharpWriter
             if (t != null && t.IsSubclassOf(typeof(MonoBehaviour)))
                 return t;
         }
-        // 兜底：遍历所有程序集
         foreach (var asm in System.AppDomain.CurrentDomain.GetAssemblies())
         {
             Type t = asm.GetType(className);
