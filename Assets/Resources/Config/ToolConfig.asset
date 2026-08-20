@@ -15,7 +15,7 @@ MonoBehaviour:
   ResolutionX: 1920
   ResolutionY: 1080
   ShowDetailByOnlyText: 0
-  ShowDetailByImg: 1
+  ShowDetailByImg: 0
   ShowDetailByModel: 0
   StartPanel: 1
   SettingPanel: 1
@@ -25,8 +25,11 @@ MonoBehaviour:
   ShowDetailByModelTag: 
   DetailPanelBG: {fileID: 0}
   DetailPanelBackBtn: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  StartPanelBG: {fileID: 0}
+  StartPanelBtn: {fileID: 0}
   HidePlayerLayout: 0
   Speed: 3
   Height: 3
   Sensitivity: 700
   Jump: 3
+  useDOtween: 0

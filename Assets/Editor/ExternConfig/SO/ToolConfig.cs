@@ -9,10 +9,13 @@ public class ToolConfig : ScriptableObject
     [ReadOnly] public bool StartPanel, SettingPanel, QASystemPanel;
     [ReadOnly] public string ShowDetailByOnlyTextTag, ShowDetailByImgTag, ShowDetailByModelTag;
     [ReadOnly] public Sprite DetailPanelBG, DetailPanelBackBtn;
+    [ReadOnly] public Sprite StartPanelBG,StartPanelBtn;
     [Header("玩家数值配置")]
     [ReadOnly] public bool HidePlayerLayout;
     [ReadOnly] public float Speed;
     [ReadOnly] public float Height;
     [ReadOnly] public float Sensitivity;
     [ReadOnly] public float Jump;
+    [Header("通用设置")]
+    [ReadOnly] public bool useDOtween;
 }

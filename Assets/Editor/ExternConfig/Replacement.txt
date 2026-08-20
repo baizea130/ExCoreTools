@@ -1,0 +1,9 @@
+[[GameManager_StartPanel]]==>[[EventCenter.TriggerEvent(new InstantiateUIPanelEvent{resourcesName = "StartUIRoot",rootLayout = "MidLayout"});]]
+
+[[useDOtween]]==>[[using DG.Tweening;]]
+
+[[StartUIRoot_useDOtween_HidePanel]]==>[[StartBtn.gameObject.GetComponent<Image>().DOFade(0, 0.5f);
+        StartBtn.gameObject.GetComponentInChildren<Text>().DOFade(0, 0.5f);
+        StartPanelBG.DOFade(0, 0.5f).OnComplete(() => Destroy(gameObject));]]
+
+[[StartUIRoot_HidePanel]]==>[[Destroy(gameObject);]]

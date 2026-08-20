@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
+<rep>useDOtween</rep>
 public class StartUIRoot : MonoBehaviour
 {
-    public RectTransform StartPanelBG;
+    public Image StartPanelBG;
     public Button StartBtn;
     private void OnEnable()
     {
@@ -10,16 +11,18 @@ public class StartUIRoot : MonoBehaviour
     }
     void Start()
     {
-        StartPanelBG = GameObject.Find("StartPanelBG").GetComponent<RectTransform>();
+        StartPanelBG = GameObject.Find("StartPanelBG").GetComponent<Image>();
         StartBtn = GameObject.Find("StartBtn").GetComponent<Button>();
         uiManager.INSTANCE.BtnExtra(StartBtn, () => EventCenter.TriggerEvent(new GameStartEvent { }));
     }
     void OnGameStartEvent(GameStartEvent evt)
     {
-        Destroy(StartPanelBG.gameObject);
+        <rep>StartUIRoot_HidePanel</rep>
+        <rep>StartUIRoot_useDOtween_HidePanel</rep>
     }
     private void OnDisable()
     {
         EventCenter.RemoveListener<GameStartEvent>(OnGameStartEvent);
     }
 }
+

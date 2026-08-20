@@ -18,7 +18,7 @@ public class MenuPage_Main : MenuPage
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            DrawButton<UISystemSpawn>("生成UI预设   (场景物体)");
+            DrawButton<UISystemSpawn>("生成UI预设   (场景物体+脚本)");
             DrawButton<InteractableSpawn>("交互逻辑生成控制器   (脚本)");
             GUILayout.EndHorizontal();
         }

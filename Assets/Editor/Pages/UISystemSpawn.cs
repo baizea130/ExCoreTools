@@ -58,6 +58,15 @@ public class UISystemSpawn : MainFunction
     /// 展示物品详情界面的返回按钮图形
     /// </summary>
     public Sprite DetailPanelBackBtn;
+
+    /// <summary>
+    /// 开始界面的背景图
+    /// </summary>
+    public Sprite StartPanelBG;
+    /// <summary>
+    /// 开始界面的进入展馆按钮的背景图
+    /// </summary>
+    public Sprite StartPanelBtn;
     public override void OnEnter(object data)
     {
         ReadConfig();
@@ -94,6 +103,7 @@ public class UISystemSpawn : MainFunction
         SettingPanel = GUILayout.Toggle(SettingPanel, "设置界面");
         QASystemPanel = GUILayout.Toggle(QASystemPanel, "答题系统");
         GUILayout.EndHorizontal();
+        NormalPanelExtension();
         GUILayout.EndScrollView();
         GUI.contentColor = Color.yellow;
         if (GUILayout.Button("生成UI层级", GUILayout.Height(30)))
@@ -108,6 +118,8 @@ public class UISystemSpawn : MainFunction
             {
                 SetUILayouts(SetCanvas(ResolutionX, ResolutionY));//创建Canvas和设置UI图层
                 SetUiManager();
+                SetUiPanelsCS();
+                WriteConfig();
             }
             );
         }
@@ -178,11 +190,33 @@ public class UISystemSpawn : MainFunction
             uiManager = new GameObject("uiManager");
         }
         List<GameObject> target = new List<GameObject>() { uiManager };
-        CSharpWriter.Write("uiManager", null, target);
-        WriteConfig();
+        CSharpWriter.Write("uiManager", target);
     }
     /// <summary>
-    /// 根据详情勾选框的内容进行拓展
+    /// 根据选择生成UI Panel预制体下的脚本，改的是预制体属性，而不是场景中物体
+    /// <para>当修改 通用设置 中的 是否使用DG.Tween时，此函数会通过事件同步触发</para>
+    /// </summary>
+    private void SetUiPanelsCS()
+    {
+        if (StartPanel)
+        {
+            HashSet<string> rep = new HashSet<string>();
+            if (MethodExtensions.CreateSO<ToolConfig>().useDOtween)
+            {
+                rep.Add("useDOtween");
+                rep.Add("StartUIRoot_useDOtween_HidePanel");
+            }
+            else
+            {
+                rep.Add("StartUIRoot_HidePanel");
+            }
+            GameObject startUIRoot = Resources.Load<GameObject>("uiPrefabs/StartUIRoot");
+
+            CSharpWriter.Write("StartUIRoot", rep, null);
+        }
+    }
+    /// <summary>
+    /// 根据详情勾选框的内容进行拓展(详情界面)
     /// </summary>
     private void DetailPanelExtension()
     {
@@ -216,5 +250,25 @@ public class UISystemSpawn : MainFunction
                 CheckFieldEmpty(ShowDetailByModelTag, "*请确保编辑器中有同名标签");
             }
         }
+    }
+    /// <summary>
+    /// 根据界面勾选框的内容进行拓展(普通界面)
+    /// </summary>
+    private void NormalPanelExtension()
+    {
+        if (StartPanel)
+        {
+            GUILayout.Space(15);
+            StartPanelBG = EditorGUILayout.ObjectField("开始界面背景Sprite", StartPanelBG, typeof(Sprite), true) as Sprite;
+            CheckFieldEmpty(StartPanelBG);
+            GUILayout.Space(15);
+            StartPanelBtn = EditorGUILayout.ObjectField("进入展馆按钮Sprite", StartPanelBtn, typeof(Sprite), true) as Sprite;
+            CheckFieldEmpty(StartPanelBtn);
+            GUILayout.Space(15);
+        }
+    }
+    public override void OnExit()
+    {
+        WriteConfig();
     }
 }

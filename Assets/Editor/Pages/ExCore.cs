@@ -28,13 +28,12 @@ public class ExCore : EditorWindow
     /// 获取在InitSceneObj中替换的字符串字典
     /// </summary>
     /// <returns></returns>
-    private static Dictionary<string, string> GetReplaceDict()
+    private static HashSet<string> GetReplaceDict()
     {
-        Dictionary<string, string> replacement = new Dictionary<string, string>();
-        replacement.Add("StartPanel", string.Empty);
+        HashSet<string> replacement = new HashSet<string>();
         if (MethodExtensions.CreateSO<ToolConfig>().StartPanel == true)
         {
-            replacement["StartPanel"] = "EventCenter.TriggerEvent(new InstantiateUIPanelEvent{resourcesName = \"StartUIRoot\",rootLayout = \"MidLayout\"});";
+            replacement.Add("GameManager_StartPanel");
         }
         return replacement;
     }

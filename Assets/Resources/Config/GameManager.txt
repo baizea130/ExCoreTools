@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        <rep>StartPanel</rep>
+        <rep>GameManager_StartPanel</rep>
     }
 
     // Update is called once per frame
