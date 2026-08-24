@@ -36,4 +36,24 @@ MonoBehaviour:
   Height: 0
   Sensitivity: 0
   Jump: 0
+  CollidersByOnlyText:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  StringsByOnlyText:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  CollidersByImg: []
+  StringsByImg: []
+  CollidersByModel: []
+  StringsByModel: []
   useDOtween: 0
