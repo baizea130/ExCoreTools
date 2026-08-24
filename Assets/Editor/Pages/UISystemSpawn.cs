@@ -50,23 +50,29 @@ public class UISystemSpawn : MainFunction
     private bool QASystemPanel = false;
     private Vector2 scrollPos;
     #endregion
+    #region Sprites and path
     /// <summary>
     /// 展示物品详情界面的背景图
     /// </summary>
     public Sprite DetailPanelBG;
+    public string DetailPanelBGPath;
     /// <summary>
     /// 展示物品详情界面的返回按钮图形
     /// </summary>
     public Sprite DetailPanelBackBtn;
+    public string DetailPanelBackBtnPath;
 
     /// <summary>
     /// 开始界面的背景图
     /// </summary>
     public Sprite StartPanelBG;
+    public string StartPanelBGPath;
     /// <summary>
     /// 开始界面的进入展馆按钮的背景图
     /// </summary>
     public Sprite StartPanelBtn;
+    public string StartPanelBtnPath;
+    #endregion
     public override void OnEnter(object data)
     {
         ReadConfig();
@@ -210,8 +216,6 @@ public class UISystemSpawn : MainFunction
             {
                 rep.Add("StartUIRoot_HidePanel");
             }
-            GameObject startUIRoot = Resources.Load<GameObject>("uiPrefabs/StartUIRoot");
-
             CSharpWriter.Write("StartUIRoot", rep, null);
         }
     }
@@ -225,9 +229,11 @@ public class UISystemSpawn : MainFunction
             GUILayout.Space(15);
             DetailPanelBG = EditorGUILayout.ObjectField("详情界面背景Sprite", DetailPanelBG, typeof(Sprite), true) as Sprite;
             CheckFieldEmpty(DetailPanelBG);
+            DetailPanelBGPath = GetAssetPath(DetailPanelBG);
             GUILayout.Space(15);
             DetailPanelBackBtn = EditorGUILayout.ObjectField("详情界面关闭按钮Sprite", DetailPanelBackBtn, typeof(Sprite), true) as Sprite;
             CheckFieldEmpty(DetailPanelBackBtn);
+            DetailPanelBackBtnPath = GetAssetPath(DetailPanelBackBtn);
             GUILayout.Space(25);
             if (ShowDetailByOnlyText)
             {
@@ -261,12 +267,15 @@ public class UISystemSpawn : MainFunction
             GUILayout.Space(15);
             StartPanelBG = EditorGUILayout.ObjectField("开始界面背景Sprite", StartPanelBG, typeof(Sprite), true) as Sprite;
             CheckFieldEmpty(StartPanelBG);
+            StartPanelBGPath = GetAssetPath(StartPanelBG);
             GUILayout.Space(15);
             StartPanelBtn = EditorGUILayout.ObjectField("进入展馆按钮Sprite", StartPanelBtn, typeof(Sprite), true) as Sprite;
             CheckFieldEmpty(StartPanelBtn);
+            StartPanelBtnPath = GetAssetPath(StartPanelBtn);
             GUILayout.Space(15);
         }
     }
+
     public override void OnExit()
     {
         WriteConfig();

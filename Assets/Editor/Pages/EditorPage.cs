@@ -138,6 +138,51 @@ public abstract class EditorPage
         }
         return false;
     }
+    /// <summary>
+    /// 判断导入的资源是否在Resources文件夹内并自动填充Res尾部路径
+    /// </summary>
+    /// <param name="assetObject">资源</param>
+    /// <returns></returns>
+    protected string GetAssetPath(UnityEngine.Object assetObject)
+    {
+        if (assetObject == null)
+        {
+            return null;
+        }
+        string fullPath = AssetDatabase.GetAssetPath(assetObject);
+        if (string.IsNullOrEmpty(fullPath))
+        {
+            GUI.contentColor = Color.red;
+            GUILayout.Label("*资源未保存在项目Assets目录中");
+            GUI.contentColor = Color.white;
+            return null;
+        }
+        string resMarker = "/Resources/";
+        int resIndex = fullPath.IndexOf(resMarker, System.StringComparison.OrdinalIgnoreCase);
+        if (resIndex >= 0)
+        {
+            string resPath = fullPath.Substring(resIndex + resMarker.Length);
+            string ext = System.IO.Path.GetExtension(resPath);
+            if (!string.IsNullOrEmpty(ext))
+            {
+                resPath = resPath.Substring(0, resPath.Length - ext.Length);
+            }
+
+            GUI.contentColor = Color.green;
+            GUILayout.Label($"Resources路径：{resPath}");
+            GUI.contentColor = Color.white;
+
+            return resPath;// 返回可直接用于 Resources.Load<T>() 的路径
+        }
+        else
+        {
+            GUI.contentColor = Color.red;
+            GUILayout.Label("*资源不在Resources文件夹中");
+            GUI.contentColor = Color.white;
+
+            return fullPath;
+        }
+    }
     protected void ReadConfig()
     {
         ToolConfig config = MethodExtensions.CreateSO<ToolConfig>();
@@ -148,5 +193,6 @@ public abstract class EditorPage
         ToolConfig config = MethodExtensions.CreateSO<ToolConfig>();
         MethodExtensions.AutoMap(config, this);
         EditorUtility.SetDirty(config);
+        AssetDatabase.SaveAssets();
     }
 }

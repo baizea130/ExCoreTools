@@ -1,18 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     // Start is called before the first frame update
     void Start()
     {
         <rep>GameManager_StartPanel</rep>
     }
-
-    // Update is called once per frame
     void Update()
     {
-        
+
+    }
+    public static T GetConfig<T>() where T : ScriptableObject
+    {
+        string dir = "Assets/Resources/SO";
+        string path = $"{dir}/{typeof(T).Name}.asset";
+        T existing = AssetDatabase.LoadAssetAtPath<T>(path);
+        if (existing != null)
+            return existing;
+        Debug.LogError("不存在配置文件");
+        return null;
     }
 }

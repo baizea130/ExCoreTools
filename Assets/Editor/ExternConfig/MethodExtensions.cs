@@ -36,7 +36,7 @@ public static class MethodExtensions
     /// <returns></returns>
     public static T CreateSO<T>() where T : ScriptableObject
     {
-        string dir = "Assets/Resources/Config";
+        string dir = "Assets/Resources/SO";
         string path = $"{dir}/{typeof(T).Name}.asset";
         T existing = AssetDatabase.LoadAssetAtPath<T>(path);
         if (existing != null)

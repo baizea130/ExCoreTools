@@ -14,22 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ResolutionX: 1920
   ResolutionY: 1080
-  ShowDetailByOnlyText: 0
+  ShowDetailByOnlyText: 1
   ShowDetailByImg: 0
   ShowDetailByModel: 0
   StartPanel: 1
-  SettingPanel: 1
+  SettingPanel: 0
   QASystemPanel: 0
-  ShowDetailByOnlyTextTag: 
+  ShowDetailByOnlyTextTag: 123
   ShowDetailByImgTag: 
   ShowDetailByModelTag: 
   DetailPanelBG: {fileID: 0}
-  DetailPanelBackBtn: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  StartPanelBG: {fileID: 0}
-  StartPanelBtn: {fileID: 0}
+  DetailPanelBackBtn: {fileID: 0}
+  StartPanelBG: {fileID: 21300000, guid: f1b894f252340c3468b457a2d194f1f3, type: 3}
+  StartPanelBtn: {fileID: 21300000, guid: f00ae64ae05900b42ba6fe9d6a7526eb, type: 3}
+  StartPanelBGPath: Sprites/gui_01_bg_03
+  StartPanelBtnPath: Sprites/gui_01_slider_3_button
+  DetailPanelBGPath: 
+  DetailPanelBackBtnPath: 
   HidePlayerLayout: 0
-  Speed: 3
-  Height: 3
-  Sensitivity: 700
-  Jump: 3
+  Speed: 0
+  Height: 0
+  Sensitivity: 0
+  Jump: 0
   useDOtween: 0
