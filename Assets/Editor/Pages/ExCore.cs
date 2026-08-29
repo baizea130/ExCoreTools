@@ -31,7 +31,7 @@ public class ExCore : EditorWindow
     private static HashSet<string> GetReplaceDict()
     {
         HashSet<string> replacement = new HashSet<string>();
-        if (MethodExtensions.CreateSO<ToolConfig>().StartPanel == true)
+        if (MethodExtensions.GetOrCreateSO<ToolConfig>(true).StartPanel == true)
         {
             replacement.Add("GameManager_StartPanel");
         }

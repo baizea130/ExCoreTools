@@ -17,25 +17,13 @@ public class UISystemSpawn : MainFunction
     /// </summary>
     private bool ShowDetailByOnlyText = false;
     /// <summary>
-    /// 点击后展现 纯文字 的物体标签
-    /// </summary>
-    private string ShowDetailByOnlyTextTag;
-    /// <summary>
     /// 详情面板以 文字+静态图片 的形式呈现
     /// </summary>
     private bool ShowDetailByImg = false;
     /// <summary>
-    /// 点击后展现 文字+静态图片 的物体标签
-    /// </summary>
-    private string ShowDetailByImgTag;
-    /// <summary>
     /// 详情面板以 文字+3D可旋转缩放交互模型 的形式呈现
     /// </summary>
     private bool ShowDetailByModel = false;
-    /// <summary>
-    /// 点击后展现 文字+3D可旋转缩放交互模型 的物体标签
-    /// </summary>
-    private string ShowDetailByModelTag;
     /// <summary>
     /// 开始界面
     /// </summary>
@@ -124,8 +112,9 @@ public class UISystemSpawn : MainFunction
             {
                 SetUILayouts(SetCanvas(ResolutionX, ResolutionY));//创建Canvas和设置UI图层
                 SetUiManager();
-                SetUiPanelsCS();
                 WriteConfig();
+                SetUiPanelsCS();
+
             }
             );
         }
@@ -206,17 +195,20 @@ public class UISystemSpawn : MainFunction
     {
         if (StartPanel)
         {
-            HashSet<string> rep = new HashSet<string>();
-            if (MethodExtensions.CreateSO<ToolConfig>().useDOtween)
+            HashSet<string> hashRep = new HashSet<string>();
+            Dictionary<string, string> dictRep = new Dictionary<string, string>();
+            if (MethodExtensions.GetOrCreateSO<ToolConfig>(true).useDOtween)
             {
-                rep.Add("useDOtween");
-                rep.Add("StartUIRoot_useDOtween_HidePanel");
+                hashRep.Add("useDOtween");
+                hashRep.Add("StartUIRoot_useDOtween_HidePanel");
             }
             else
             {
-                rep.Add("StartUIRoot_HidePanel");
+                hashRep.Add("StartUIRoot_HidePanel");
             }
-            CSharpWriter.Write("StartUIRoot", rep, null);
+            dictRep.Add("StartUIRoot_StartPanelBGPath", MethodExtensions.GetOrCreateSO<ToolConfig>(true).StartPanelBGPath);
+            dictRep.Add("StartUIRoot_StartPanelBtnPath", MethodExtensions.GetOrCreateSO<ToolConfig>(true).StartPanelBtnPath);
+            CSharpWriter.Write("StartUIRoot", hashRep, dictRep, null);
         }
     }
     /// <summary>
@@ -235,26 +227,6 @@ public class UISystemSpawn : MainFunction
             CheckFieldEmpty(DetailPanelBackBtn);
             DetailPanelBackBtnPath = GetAssetPath(DetailPanelBackBtn);
             GUILayout.Space(25);
-            if (ShowDetailByOnlyText)
-            {
-                GUILayout.Label("点击后展示纯文本的物体标签：");
-                ShowDetailByOnlyTextTag = EditorGUILayout.TextField("", ShowDetailByOnlyTextTag, GUILayout.ExpandWidth(true));
-                CheckFieldEmpty(ShowDetailByOnlyTextTag, "*请确保编辑器中有同名标签");
-            }
-            if (ShowDetailByImg)
-            {
-                GUILayout.Space(15);
-                GUILayout.Label("点击后展示 文本+图片 的物体标签：");
-                ShowDetailByImgTag = EditorGUILayout.TextField("", ShowDetailByImgTag, GUILayout.ExpandWidth(true));
-                CheckFieldEmpty(ShowDetailByImgTag, "*请确保编辑器中有同名标签");
-            }
-            if (ShowDetailByModel)
-            {
-                GUILayout.Space(15);
-                GUILayout.Label("点击后展示 文本+3D模型 的物体标签：");
-                ShowDetailByModelTag = EditorGUILayout.TextField("", ShowDetailByModelTag, GUILayout.ExpandWidth(true));
-                CheckFieldEmpty(ShowDetailByModelTag, "*请确保编辑器中有同名标签");
-            }
         }
     }
     /// <summary>

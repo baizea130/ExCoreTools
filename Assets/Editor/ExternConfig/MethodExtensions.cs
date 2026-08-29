@@ -30,13 +30,22 @@ public static class MethodExtensions
         return comp;
     }
     /// <summary>
-    /// 在Assets/Resources/Config下创建一个名称和SO定义脚本类同名的SO，若已存在则获取
+    /// 在Assets/Editor/ExternConfig/SO或Resources/SO下创建一个名称和SO定义脚本类同名的SO，若已存在则获取
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    /// <param name="isEditor">若为是则追踪Editor文件夹，否则Resources下</param>
     /// <returns></returns>
-    public static T CreateSO<T>() where T : ScriptableObject
+    public static T GetOrCreateSO<T>(bool isEditor) where T : ScriptableObject
     {
-        string dir = "Assets/Resources/SO";
+        string dir;
+        if (isEditor)
+        {
+            dir = "Assets/Editor/ExternConfig/SO";
+        }
+        else
+        {
+            dir = "Assets/Resources/SO";
+        }
         string path = $"{dir}/{typeof(T).Name}.asset";
         T existing = AssetDatabase.LoadAssetAtPath<T>(path);
         if (existing != null)

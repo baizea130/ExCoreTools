@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-<rep>useDOtween</rep>
+
 public class StartUIRoot : MonoBehaviour
 {
     public Image StartPanelBG;
@@ -14,13 +14,13 @@ public class StartUIRoot : MonoBehaviour
         StartPanelBG = GameObject.Find("StartPanelBG").GetComponent<Image>();
         StartBtn = GameObject.Find("StartBtn").GetComponent<Button>();
         uiManager.INSTANCE.BtnExtra(StartBtn, () => EventCenter.TriggerEvent(new GameStartEvent { }));
-        StartPanelBG.sprite = Resources.Load<Sprite>(GameManager.GetConfig<ToolConfig>().StartPanelBGPath);
-        StartBtn.gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>(GameManager.GetConfig<ToolConfig>().StartPanelBtnPath);
+        StartPanelBG.sprite = Resources.Load<Sprite>("<rep>StartUIRoot_StartPanelBGPath</rep>");
+        StartBtn.gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("<rep>StartUIRoot_StartPanelBtnPath</rep>");
     }
     void OnGameStartEvent(GameStartEvent evt)
     {
-        <rep>StartUIRoot_HidePanel</rep>
-        <rep>StartUIRoot_useDOtween_HidePanel</rep>
+        Destroy(gameObject);
+        
     }
     private void OnDisable()
     {

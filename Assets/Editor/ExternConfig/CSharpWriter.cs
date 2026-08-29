@@ -104,6 +104,63 @@ public static class CSharpWriter
 
         return WriteCore(content, name, targets);
     }
+    /// <summary>
+    /// 混合模式：HashSet 中标记的 Key 去 Replacement.txt 查代码块替换；
+    /// &lt;rep&gt;Key&lt;/rep&gt; 直接替换为 Dictionary 中的 Value
+    /// 未标记的 Key 替换为空字符串（条件删除）。
+    /// </summary>
+    public static string Write(string name, HashSet<string> hashReplacements, Dictionary<string, string> dictReplacements, List<GameObject> targets = null)
+    {
+        string input = Path.Combine(Application.dataPath, "Resources", "Config", name + ".txt");
+        if (!File.Exists(input))
+            return $"配置文件 {name} 不存在";
+
+        string content = File.ReadAllText(input);
+
+        // 按需解析 Replacement.txt
+        Dictionary<string, string> codeBlockDict = null;
+        if (hashReplacements != null && hashReplacements.Count > 0)
+            codeBlockDict = ParseReplacementFile();
+
+        // 忽略大小写的激活 Key 集合
+        var activeKeys = hashReplacements != null
+            ? new HashSet<string>(hashReplacements, StringComparer.OrdinalIgnoreCase)
+            : null;
+
+        // 扫描模板中所有 <rep>key</rep>，每个匹配都执行替换
+        var matches = Regex.Matches(content, @"<rep>(.*?)</rep>");
+
+        foreach (Match match in matches)
+        {
+            string key = match.Groups[1].Value;
+            string tag = $"<rep>{key}</rep>";
+
+            if (activeKeys != null && activeKeys.Contains(key))
+            {
+                // 条件满足：去 Replacement.txt 查代码块
+                if (codeBlockDict != null && codeBlockDict.TryGetValue(key, out string block))
+                {
+                    content = content.Replace(tag, block);
+                }
+                else
+                {
+                    Debug.LogWarning($"[CSharpWriter] Replacement.txt 中未找到代码块 [{key}]，替换为空");
+                    content = content.Replace(tag, string.Empty);
+                }
+            }
+        }
+        if (dictReplacements != null)
+        {
+            foreach (var kv in dictReplacements)
+            {
+                string tag = $"<rep>{kv.Key}</rep>";
+                content = content.Replace(tag, kv.Value);
+            }
+        }
+        string emptyReplacement = @"<rep>(.*?)</rep>";
+        content = content.Replace(emptyReplacement, string.Empty);
+        return WriteCore(content, name, targets);
+    }
     #endregion
 
     #region 私有逻辑

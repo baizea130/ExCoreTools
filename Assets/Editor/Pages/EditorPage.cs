@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 /// <summary>
@@ -183,14 +184,36 @@ public abstract class EditorPage
             return fullPath;
         }
     }
+    /// <summary>
+    /// 添加标签
+    /// </summary>
+    /// <param name="tagName"></param>
+    protected void AddTag(string tagName)
+    {
+        if (string.IsNullOrEmpty(tagName)) return;
+        if (UnityEditorInternal.InternalEditorUtility.tags.Contains(tagName))
+        {
+            return;
+        }
+        SerializedObject tagManager = new SerializedObject(
+            AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]
+        );
+        SerializedProperty tagsProp = tagManager.FindProperty("tags");
+        tagsProp.InsertArrayElementAtIndex(tagsProp.arraySize);
+        SerializedProperty newTag = tagsProp.GetArrayElementAtIndex(tagsProp.arraySize - 1);
+        newTag.stringValue = tagName;
+
+        tagManager.ApplyModifiedProperties();
+        tagManager.Update();
+    }
     protected void ReadConfig()
     {
-        ToolConfig config = MethodExtensions.CreateSO<ToolConfig>();
+        ToolConfig config = MethodExtensions.GetOrCreateSO<ToolConfig>(true);
         MethodExtensions.AutoMap(this, config);
     }
     protected void WriteConfig()
     {
-        ToolConfig config = MethodExtensions.CreateSO<ToolConfig>();
+        ToolConfig config = MethodExtensions.GetOrCreateSO<ToolConfig>(true);
         MethodExtensions.AutoMap(config, this);
         EditorUtility.SetDirty(config);
         AssetDatabase.SaveAssets();
