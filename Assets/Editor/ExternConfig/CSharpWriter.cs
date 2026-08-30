@@ -35,7 +35,7 @@ public static class CSharpWriter
                 content = content.Replace(tag, kv.Value);
             }
         }
-
+        content = Regex.Replace(content, @"<rep>.*?</rep>", string.Empty);
         return WriteCore(content, name, targets);
     }
 
@@ -49,6 +49,7 @@ public static class CSharpWriter
             return $"配置文件 {name} 文件不存在";
 
         string content = File.ReadAllText(input);
+        content = Regex.Replace(content, @"<rep>.*?</rep>", string.Empty);
         return WriteCore(content, name, targets);
     }
 
@@ -101,7 +102,7 @@ public static class CSharpWriter
                 content = content.Replace(tag, string.Empty);
             }
         }
-
+        content = Regex.Replace(content, @"<rep>.*?</rep>", string.Empty);
         return WriteCore(content, name, targets);
     }
     /// <summary>
@@ -157,8 +158,7 @@ public static class CSharpWriter
                 content = content.Replace(tag, kv.Value);
             }
         }
-        string emptyReplacement = @"<rep>(.*?)</rep>";
-        content = content.Replace(emptyReplacement, string.Empty);
+        content = Regex.Replace(content, @"<rep>.*?</rep>", string.Empty);
         return WriteCore(content, name, targets);
     }
     #endregion

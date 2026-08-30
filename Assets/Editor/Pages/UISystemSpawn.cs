@@ -102,12 +102,6 @@ public class UISystemSpawn : MainFunction
         GUI.contentColor = Color.yellow;
         if (GUILayout.Button("生成UI层级", GUILayout.Height(30)))
         {
-
-            if (!ShowDetailByOnlyText && !ShowDetailByImg && !ShowDetailByModel)
-            {
-                ProtectDialog("至少选择一种点击详情界面形式");
-                return;
-            }
             ProtectDialog("即将按上述配置生成UI框架", () =>
             {
                 SetUILayouts(SetCanvas(ResolutionX, ResolutionY));//创建Canvas和设置UI图层

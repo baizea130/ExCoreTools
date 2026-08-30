@@ -7,3 +7,4 @@
         StartPanelBG.DOFade(0, 0.5f).OnComplete(() => Destroy(gameObject));]]
 
 [[StartUIRoot_HidePanel]]==>[[Destroy(gameObject);]]
+[[FirstPerson_InitCouldAct]]==>[[couldAct = true;]]

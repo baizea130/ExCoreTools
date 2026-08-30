@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.EventSystems;
 public class FirstPerson : MonoBehaviour
 {
     private Camera cam;
@@ -12,6 +12,7 @@ public class FirstPerson : MonoBehaviour
     private Vector3 mRayCastOffset;
     private LayerMask mask;
     public bool grounded;
+    public bool couldAct = false;
     void Start()
     {
         InitData();
@@ -20,30 +21,59 @@ public class FirstPerson : MonoBehaviour
         mRayCastOffset = new Vector3(0, -GetComponent<CapsuleCollider>().height / 2 + 0.1f);
         int playerLayer = LayerMask.NameToLayer("Player");
         mask = ~(1 << playerLayer);
+        EventCenter.AddListener<SetPlayerActState>(OnSetPlayerActState);
+        <rep>FirstPerson_InitCouldAct</rep>
     }
     void Update()
     {
-        // 从脚底发射射线
-        grounded = Physics.Raycast(transform.position + mRayCastOffset, Vector3.down, 1f, mask);
-        Debug.DrawRay(transform.position + mRayCastOffset, Vector3.down, Color.green);
-        // --- 视角 ---
-        transform.Rotate(0, Input.GetAxis("Mouse X") * Sensitivity * Time.deltaTime, 0);
-        rotX -= Input.GetAxis("Mouse Y") * Sensitivity * Time.deltaTime;
-        rotX = Mathf.Clamp(rotX, -90f, 90f);
-        cam.transform.rotation = Quaternion.Euler(rotX, transform.eulerAngles.y, 0f);
-        cam.transform.position = transform.position + Vector3.up * Height;
-        // --- 移动 ---
-        Vector3 move = transform.right * Input.GetAxis("Horizontal")
-                     + transform.forward * Input.GetAxis("Vertical");
-        rb.velocity = new Vector3(move.x * Speed, rb.velocity.y, move.z * Speed);
-        // --- 跳跃 & 重力（关键修复）---
-        if (grounded)
+        if (couldAct)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            grounded = Physics.Raycast(transform.position + mRayCastOffset, Vector3.down, 1f, mask);
+            transform.Rotate(0, Input.GetAxis("Mouse X") * Sensitivity * Time.deltaTime, 0);
+            rotX -= Input.GetAxis("Mouse Y") * Sensitivity * Time.deltaTime;
+            rotX = Mathf.Clamp(rotX, -90f, 90f);
+            cam.transform.rotation = Quaternion.Euler(rotX, transform.eulerAngles.y, 0f);
+            cam.transform.position = transform.position + Vector3.up * Height;
+
+            Vector3 move = transform.right * Input.GetAxis("Horizontal")
+                         + transform.forward * Input.GetAxis("Vertical");
+            rb.velocity = new Vector3(move.x * Speed, rb.velocity.y, move.z * Speed);
+
+            if (grounded)
             {
-                rb.velocity = new Vector3(rb.velocity.x, Jump, rb.velocity.z);
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    rb.velocity = new Vector3(rb.velocity.x, Jump, rb.velocity.z);
+                }
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                RaycastHit[] hits = Physics.RaycastAll(ray);
+                foreach (var hit in hits)
+                {
+                    if (hit.collider.gameObject.tag != "Interactable")
+                    {
+                        continue;
+                    }
+                    var script = hit.collider.GetComponent<IInteractable>();
+                    if (script != null)
+                    {
+                        script.OnClick(() => Debug.Log($"点击了物体{hit.collider.gameObject.name}"));
+                        break;
+                    }
+                }
             }
         }
+    }
+    void OnSetPlayerActState(SetPlayerActState evt)
+    {
+        couldAct = evt.targetState;
+    }
+    void OnDestroy()
+    {
+        EventCenter.RemoveListener<SetPlayerActState>(OnSetPlayerActState);
     }
     void InitData()
     {

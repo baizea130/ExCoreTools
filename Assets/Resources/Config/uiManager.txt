@@ -25,11 +25,20 @@ public class uiManager : Singleton<uiManager>
         Layouts.Add("MidLayout", MidLayout);
         Layouts.Add("TopLayout", TopLayout);
     }
+    /// <summary>
+    /// 适用于展示非展示描述的面板
+    /// </summary>
+    /// <param name="evt"></param>
     private void OnInstantiateUIPanel(InstantiateUIPanelEvent evt)
     {
         var path = "uiPrefabs/" + evt.resourcesName;
         GameObject temp = Instantiate(Resources.Load<GameObject>(path), Layouts[evt.rootLayout]);
         if (temp == null) { Debug.LogError(path + "不存在"); }
+        else
+        {
+            EventCenter.TriggerEvent(new SetPlayerActState{targetState = false});
+            temp.name = temp.name.Replace("(Clone)", "").Trim();
+        }
     }
     private void OnDestroyUIPanel(DestroyUIPanelEvent evt)
     {

@@ -1,0 +1,47 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class DetailPanelByOnlyTextRoot : MonoBehaviour, IInteractable
+{
+    public string objName;
+    public string detail;
+    [SerializeField] private string SOPath;
+    [SerializeField] private TextOnlySO textOnlySO;
+    [SerializeField] private Image BackBtnImg;
+    [SerializeField] private string BackBtnSprite_Path;
+    [SerializeField] private Image BGimg;
+    [SerializeField] private string BG_Path;
+    [SerializeField] private Text textTitle;
+    [SerializeField] private Text textDetail;
+
+    public void OnClick(Action callback)
+    {
+        EventCenter.TriggerEvent(new InstantiateUIPanelEvent { resourcesName = "DetailPanelByOnlyTextRoot", rootLayout = "MidLayout" });
+
+        BackBtnSprite_Path = "<rep>DetailPanelByOnlyTextRoot_BackBtnSprite_Path</rep>";
+        BG_Path = "<rep>DetailPanelByOnlyTextRoot_BG_Path</rep>";
+        SOPath = $"SO/{gameObject.name}";
+        textOnlySO = Resources.Load<TextOnlySO>(SOPath);
+        objName = textOnlySO.objName;
+        detail = textOnlySO.detail;
+
+        var BackBtnGameObject = GameObject.Find("DetailPanelByOnlyText_BackBtn");
+        BGimg = GameObject.Find("DetailPanelByOnlyText_BG").GetComponent<Image>();
+        BackBtnImg = BackBtnGameObject.GetComponent<Image>();
+        textTitle = GameObject.Find("DetailPanelByOnlyText_Title").GetComponent<Text>();
+        textDetail = GameObject.Find("DetailPanelByOnlyText_Detail").GetComponent<Text>();
+
+
+        BGimg.sprite = Resources.Load<Sprite>(BG_Path);
+        BackBtnImg.sprite = Resources.Load<Sprite>(BackBtnSprite_Path);
+        textTitle.text = objName;
+        textDetail.text = detail;
+
+        uiManager.INSTANCE.BtnExtra(BackBtnGameObject.GetComponent<Button>(),()=>{
+            EventCenter.TriggerEvent(new DestroyUIPanelEvent{resourcesName = "DetailPanelByOnlyTextRoot"});
+            EventCenter.TriggerEvent(new SetPlayerActState{targetState = true});
+            });
+        callback?.Invoke();
+    }
+}

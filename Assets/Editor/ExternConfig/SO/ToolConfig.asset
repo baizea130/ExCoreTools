@@ -15,27 +15,31 @@ MonoBehaviour:
   ResolutionX: 1920
   ResolutionY: 1080
   ShowDetailByOnlyText: 1
-  ShowDetailByImg: 1
-  ShowDetailByModel: 1
+  ShowDetailByImg: 0
+  ShowDetailByModel: 0
   StartPanel: 1
   SettingPanel: 0
   QASystemPanel: 0
   DetailPanelBG: {fileID: 21300000, guid: f1b894f252340c3468b457a2d194f1f3, type: 3}
-  DetailPanelBackBtn: {fileID: 0}
+  DetailPanelBackBtn: {fileID: 21300000, guid: f00ae64ae05900b42ba6fe9d6a7526eb, type: 3}
   StartPanelBG: {fileID: 21300000, guid: f1b894f252340c3468b457a2d194f1f3, type: 3}
   StartPanelBtn: {fileID: 21300000, guid: f00ae64ae05900b42ba6fe9d6a7526eb, type: 3}
   StartPanelBGPath: Sprites/gui_01_bg_03
   StartPanelBtnPath: Sprites/gui_01_slider_3_button
   DetailPanelBGPath: Sprites/gui_01_bg_03
-  DetailPanelBackBtnPath: 
+  DetailPanelBackBtnPath: Sprites/gui_01_slider_3_button
+  Player: GlobalObjectId_V1-2-9fc0d4010bbf28b4594072e72b8655ab-2097979929-0
   HidePlayerLayout: 1
   Speed: 3
   Height: 3
   Sensitivity: 500
-  Jump: 2
-  Titles: []
-  CollidersByOnlyText: []
-  StringsByOnlyText: []
+  Jump: 20
+  Titles:
+  - "\u6807\u9898"
+  CollidersByOnlyText:
+  - GlobalObjectId_V1-2-9fc0d4010bbf28b4594072e72b8655ab-1384976637-0
+  StringsByOnlyText:
+  - "\u4E00\u4E2A\u65B9\u5757"
   CollidersByImg: []
   StringsByImg: []
   SpritesByImg: []

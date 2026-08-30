@@ -144,7 +144,11 @@ public class InteractableSpawn : MainFunction
             string path = AssetDatabase.GenerateUniqueAssetPath($"{soFolder}/{fileName}.asset");
             AssetDatabase.CreateAsset(so, path);
         }
-
+        List<GameObject> targets = CollidersByOnlyText.Select(c => c.gameObject).ToList();
+        Dictionary<string, string> rep = new Dictionary<string, string>();
+        rep.Add("DetailPanelByOnlyTextRoot_BackBtnSprite_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBackBtnPath);
+        rep.Add("DetailPanelByOnlyTextRoot_BG_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBGPath);
+        CSharpWriter.Write("DetailPanelByOnlyTextRoot",rep, targets);
         // 3. 重建 ImgSO
         int imgTitleOffset = CollidersByOnlyText.Count;
         for (int i = 0; i < CollidersByImg.Count; i++)

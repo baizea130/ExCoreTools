@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public struct InstantiateUIPanelEvent : IGameEvent
 {
     public string resourcesName;
@@ -9,5 +11,9 @@ public struct DestroyUIPanelEvent : IGameEvent
 }
 public struct GameStartEvent : IGameEvent
 {
-    
+
+}
+public struct SetPlayerActState : IGameEvent
+{
+    public bool targetState;
 }

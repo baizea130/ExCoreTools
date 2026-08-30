@@ -56,7 +56,7 @@ public static class EventCenter
         Type key = typeof(T);
         if (!mEventDict.TryGetValue(key, out var item))
         {
-            Debug.LogError($"不存在事件：{key.Name}");
+            Debug.LogWarning($"不存在事件：{key.Name}");
             return;
         }
         (item as Action<T>)?.Invoke(param);

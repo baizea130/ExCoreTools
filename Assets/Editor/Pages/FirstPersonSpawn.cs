@@ -57,8 +57,13 @@ public class FirstPersonSpawn : MainFunction
                         { "Sensitivity", Sensitivity.ToString() },
                         { "Height",      Height.ToString() }
                     };
+                    var repHash = new HashSet<string>();
+                    if (!MethodExtensions.GetOrCreateSO<ToolConfig>(true).StartPanel)
+                    {
+                        repHash.Add("FirstPerson_InitCouldAct");
+                    }
                     List<GameObject> target = new List<GameObject> { Player };
-                    Debug.Log(CSharpWriter.Write("FirstPerson", replacements, target));
+                    Debug.Log(CSharpWriter.Write("FirstPerson", repHash, replacements, target));
                     WriteConfig();
                 });
             }
@@ -89,5 +94,8 @@ public class FirstPersonSpawn : MainFunction
         }
         Camera.main.cullingMask |= 1 << layer;
     }
-
+    public override void OnExit()
+    {
+        WriteConfig();
+    }
 }

@@ -12,6 +12,7 @@ public class ToolConfig : ScriptableObject
     [ReadOnly] public Sprite StartPanelBG, StartPanelBtn;
     [ReadOnly] public string StartPanelBGPath, StartPanelBtnPath, DetailPanelBGPath, DetailPanelBackBtnPath;
     [Header("玩家数值配置")]
+    [ReadOnly] public string Player;
     [ReadOnly] public bool HidePlayerLayout;
     [ReadOnly] public float Speed;
     [ReadOnly] public float Height;
@@ -19,15 +20,15 @@ public class ToolConfig : ScriptableObject
     [ReadOnly] public float Jump;
     [Header("交互系统控制")]
     [ReadOnly] public List<string> Titles = new List<string>();
-    [ReadOnly] public List<Collider> CollidersByOnlyText = new List<Collider>();
+    [ReadOnly] public List<string> CollidersByOnlyText = new List<string>();
     [ReadOnly] public List<string> StringsByOnlyText = new List<string>();
 
-    [ReadOnly] public List<Collider> CollidersByImg = new List<Collider>();
+    [ReadOnly] public List<string> CollidersByImg = new List<string>();
     [ReadOnly] public List<string> StringsByImg = new List<string>();
     [ReadOnly] public List<Sprite> SpritesByImg = new List<Sprite>();
     [ReadOnly] public List<string> SpritesPathByImg = new List<string>();
 
-    [ReadOnly] public List<Collider> CollidersByModel = new List<Collider>();
+    [ReadOnly] public List<string> CollidersByModel = new List<string>();
     [ReadOnly] public List<string> StringsByModel = new List<string>();
     [ReadOnly] public List<GameObject> ModelsByModel = new List<GameObject>();
     [ReadOnly] public List<GameObject> PivotsByModel = new List<GameObject>();

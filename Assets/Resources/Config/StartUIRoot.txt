@@ -11,14 +11,15 @@ public class StartUIRoot : MonoBehaviour
     }
     void Start()
     {
-        StartPanelBG = GameObject.Find("StartPanelBG").GetComponent<Image>();
-        StartBtn = GameObject.Find("StartBtn").GetComponent<Button>();
+        StartPanelBG = GameObject.Find("StartPanel_BG").GetComponent<Image>();
+        StartBtn = GameObject.Find("StartPanel_StartBtn").GetComponent<Button>();
         uiManager.INSTANCE.BtnExtra(StartBtn, () => EventCenter.TriggerEvent(new GameStartEvent { }));
         StartPanelBG.sprite = Resources.Load<Sprite>("<rep>StartUIRoot_StartPanelBGPath</rep>");
         StartBtn.gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("<rep>StartUIRoot_StartPanelBtnPath</rep>");
     }
     void OnGameStartEvent(GameStartEvent evt)
     {
+        EventCenter.TriggerEvent(new SetPlayerActState{targetState = true});
         Destroy(gameObject);
         
     }

@@ -11,6 +11,11 @@ public class ExCore : EditorWindow
         CSharpWriter.Write("EventCenter");
         CSharpWriter.Write("Singleton");
         CSharpWriter.Write("GameEvents");
+        CSharpWriter.Write("ImgSO");
+        CSharpWriter.Write("ModelSO");
+        CSharpWriter.Write("TextOnlySO");
+        CSharpWriter.Write("IInteractable");
+        CSharpWriter.Write("AutoFocusGameView");
     }
     [MenuItem("Tools/应用场景框架配置", false, 20)]
     public static void InitSceneObj()
