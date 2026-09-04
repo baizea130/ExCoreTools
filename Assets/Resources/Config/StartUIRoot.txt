@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-
+<rep>useDOtween</rep>
 public class StartUIRoot : MonoBehaviour
 {
     public Image StartPanelBG;
@@ -20,7 +20,8 @@ public class StartUIRoot : MonoBehaviour
     void OnGameStartEvent(GameStartEvent evt)
     {
         EventCenter.TriggerEvent(new SetPlayerActState{targetState = true});
-        Destroy(gameObject);
+        <rep>StartUIRoot_HidePanel</rep>
+        <rep>StartUIRoot_useDOtween_HidePanel</rep>
         
     }
     private void OnDisable()

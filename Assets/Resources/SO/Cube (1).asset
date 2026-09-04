@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1d3dc32464f02fa4f88256bfbac42c45, type: 3}
-  m_Name: Cube
+  m_Name: Cube (1)
   m_EditorClassIdentifier: 
   objName: "\u6807\u9898"
   detail: "\u4E00\u4E2A\u65B9\u5757"
