@@ -1,0 +1,51 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class DetailPanelByImgRoot : MonoBehaviour, IInteractable
+{
+    public string objName;
+    public string detail;
+    [SerializeField] private string SOPath;
+    [SerializeField] private ImgSO  imgSO;
+    [SerializeField] private Image BackBtnImg;
+    [SerializeField] private string BackBtnSprite_Path;
+    [SerializeField] private Image BGimg;
+    [SerializeField] private string BG_Path;
+    [SerializeField] private Text textTitle;
+    [SerializeField] private Text textDetail;
+    [SerializeField] private Image Img;
+    [SerializeField] private string Img_Path;
+    public void OnClick(Action callback)
+    {
+        EventCenter.TriggerEvent(new InstantiateUIPanelEvent { resourcesName = "DetailPanelByImgRoot", rootLayout = "MidLayout" });
+
+        BackBtnSprite_Path = "<rep>DetailPanelByImgRoot_BackBtnSprite_Path</rep>";
+        BG_Path = "<rep>DetailPanelByImgRoot_BG_Path</rep>";
+        SOPath = $"SO/{gameObject.name}";
+        imgSO = Resources.Load<ImgSO>(SOPath);
+        objName = imgSO.objName;
+        detail = imgSO.detail;
+        Img_Path = imgSO.spritePath;
+
+        var BackBtnGameObject = GameObject.Find("DetailPanelByImg_BackBtn");
+        BGimg = GameObject.Find("DetailPanelByImg_BG").GetComponent<Image>();
+        BackBtnImg = BackBtnGameObject.GetComponent<Image>();
+        textTitle = GameObject.Find("DetailPanelByImg_Title").GetComponent<Text>();
+        textDetail = GameObject.Find("DetailPanelByImg_Detail").GetComponent<Text>();
+        Img = GameObject.Find("DetailPanelByImg_Img").GetComponent<Image>();
+
+        BGimg.sprite = Resources.Load<Sprite>(BG_Path);
+        BackBtnImg.sprite = Resources.Load<Sprite>(BackBtnSprite_Path);
+        Img.sprite = Resources.Load<Sprite>(Img_Path);
+        textTitle.text = objName;
+        textDetail.text = detail;
+
+        uiManager.INSTANCE.BtnExtra(BackBtnGameObject.GetComponent<Button>(), () =>
+        {
+            EventCenter.TriggerEvent(new DestroyUIPanelEvent { resourcesName = "DetailPanelByImgRoot" });
+            EventCenter.TriggerEvent(new SetPlayerActState { targetState = true });
+        });
+        callback?.Invoke();
+    }
+}

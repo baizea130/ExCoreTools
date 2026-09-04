@@ -17,18 +17,22 @@ public static class MethodExtensions
         T comp = go.GetComponent<T>();
         if (comp == null)
         {
-#if UNITY_EDITOR
             if (!Application.isPlaying)
                 comp = Undo.AddComponent<T>(go);
             else
                 comp = go.AddComponent<T>();
-#else
-            comp = go.AddComponent<T>();
-#endif
         }
         return comp;
     }
-
+    public static T GetAndRemoveComponent<T>(this GameObject go) where T : Component
+    {
+        T comp = go.GetComponent<T>();
+        if (comp != null)
+        {
+            Undo.DestroyObjectImmediate(comp);
+        }
+        return comp;
+    }
     /// <summary>
     /// 在Assets/Editor/ExternConfig/SO或Resources/SO下创建一个名称和SO定义脚本类同名的SO，若已存在则获取
     /// </summary>

@@ -15,7 +15,7 @@ MonoBehaviour:
   ResolutionX: 1920
   ResolutionY: 1080
   ShowDetailByOnlyText: 1
-  ShowDetailByImg: 0
+  ShowDetailByImg: 1
   ShowDetailByModel: 0
   StartPanel: 1
   SettingPanel: 0
@@ -31,20 +31,16 @@ MonoBehaviour:
   Player: GlobalObjectId_V1-2-9fc0d4010bbf28b4594072e72b8655ab-314968074-0
   HidePlayerLayout: 1
   Speed: 4
-  Height: 4
-  Sensitivity: 700
+  Height: 2
+  Sensitivity: 1200
   Jump: 0
-  Titles:
-  - "\u6807\u9898"
-  CollidersByOnlyText:
-  - GlobalObjectId_V1-2-9fc0d4010bbf28b4594072e72b8655ab-1100102995-0
-  StringsByOnlyText:
-  - "\u4E00\u4E2A\u65B9\u5757"
+  Titles: []
+  CollidersByOnlyText: []
+  StringsByOnlyText: []
   CollidersByImg: []
   StringsByImg: []
   SpritesByImg: []
-  SpritesPathByImg:
-  - Sprites/gui_01_bg_03
+  SpritesPathByImg: []
   CollidersByModel: []
   StringsByModel: []
   ModelsByModel: []

@@ -59,15 +59,16 @@ public class InteractableSpawn : MainFunction
             ProtectDialog("即将清空该界面下所有列表(无法撤销)",
             () =>
             {
-                foreach (var c in CollidersByOnlyText) { if (c != null) { Undo.RecordObject(c.gameObject, "Reset Tag"); c.gameObject.tag = "Untagged"; } }
-                foreach (var c in CollidersByImg) { if (c != null) { Undo.RecordObject(c.gameObject, "Reset Tag"); c.gameObject.tag = "Untagged"; } }
-                foreach (var c in CollidersByModel) { if (c != null) { Undo.RecordObject(c.gameObject, "Reset Tag"); c.gameObject.tag = "Untagged"; } }
+                foreach (var c in CollidersByOnlyText) { if (c != null) { Undo.RecordObject(c.gameObject, "Reset Tag"); c.gameObject.tag = "Untagged"; c.gameObject.GetAndRemoveComponent<DetailPanelByOnlyTextRoot>(); } }
+                foreach (var c in CollidersByImg) { if (c != null) { Undo.RecordObject(c.gameObject, "Reset Tag"); c.gameObject.tag = "Untagged"; c.gameObject.GetAndRemoveComponent<DetailPanelByImgRoot>(); } }
+                foreach (var c in CollidersByModel) { if (c != null) { Undo.RecordObject(c.gameObject, "Reset Tag"); c.gameObject.tag = "Untagged";/*c.gameObject.GetAndRemoveComponent<DetailPanelByImgRoot>();*/  } }
                 #region List Clear
                 CollidersByOnlyText.Clear();
                 StringsByOnlyText.Clear();
                 CollidersByImg.Clear();
                 StringsByImg.Clear();
                 SpritesByImg.Clear();
+                SpritesPathByImg.Clear();
                 CollidersByModel.Clear();
                 StringsByModel.Clear();
                 ModelsByModel.Clear();
@@ -109,8 +110,7 @@ public class InteractableSpawn : MainFunction
             default: return i;
         }
     }
-
-    // ========== RefreshSO 重写 ==========
+    // ========== RefreshSO 重写 和 脚本生成 ==========
     private void RefreshSO()
     {
         string soFolder = "Assets/Resources/SO";
@@ -143,12 +143,14 @@ public class InteractableSpawn : MainFunction
             string fileName = SanitizeFileName(CollidersByOnlyText[i].gameObject.name);
             string path = AssetDatabase.GenerateUniqueAssetPath($"{soFolder}/{fileName}.asset");
             AssetDatabase.CreateAsset(so, path);
+
+            List<GameObject> targets = CollidersByOnlyText.Select(c => c.gameObject).ToList();
+            Dictionary<string, string> rep = new Dictionary<string, string>();
+            rep.Add("DetailPanelByOnlyTextRoot_BackBtnSprite_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBackBtnPath);
+            rep.Add("DetailPanelByOnlyTextRoot_BG_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBGPath);
+            CSharpWriter.Write("DetailPanelByOnlyTextRoot", rep, targets);
         }
-        List<GameObject> targets = CollidersByOnlyText.Select(c => c.gameObject).ToList();
-        Dictionary<string, string> rep = new Dictionary<string, string>();
-        rep.Add("DetailPanelByOnlyTextRoot_BackBtnSprite_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBackBtnPath);
-        rep.Add("DetailPanelByOnlyTextRoot_BG_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBGPath);
-        CSharpWriter.Write("DetailPanelByOnlyTextRoot",rep, targets);
+
         // 3. 重建 ImgSO
         int imgTitleOffset = CollidersByOnlyText.Count;
         for (int i = 0; i < CollidersByImg.Count; i++)
@@ -166,6 +168,12 @@ public class InteractableSpawn : MainFunction
             string fileName = SanitizeFileName(CollidersByImg[i].gameObject.name);
             string path = AssetDatabase.GenerateUniqueAssetPath($"{soFolder}/{fileName}.asset");
             AssetDatabase.CreateAsset(so, path);
+
+            List<GameObject> targets = CollidersByImg.Select(c => c.gameObject).ToList();
+            Dictionary<string, string> rep = new Dictionary<string, string>();
+            rep.Add("DetailPanelByImgRoot_BackBtnSprite_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBackBtnPath);
+            rep.Add("DetailPanelByImgRoot_BG_Path", MethodExtensions.GetOrCreateSO<ToolConfig>(true).DetailPanelBGPath);
+            CSharpWriter.Write("DetailPanelByImgRoot", rep, targets);
         }
 
         // 4. 重建 ModelSO
@@ -256,6 +264,8 @@ public class InteractableSpawn : MainFunction
                     Titles.RemoveAt(removeTitleIndex);
 
                 colliders[i].gameObject.tag = "Untagged";
+                colliders[i].gameObject.GetAndRemoveComponent<DetailPanelByOnlyTextRoot>();
+                colliders[i].gameObject.GetAndRemoveComponent<DetailPanelByImgRoot>();
                 colliders.RemoveAt(i);
                 texts.RemoveAt(i);
                 if (type == InteractableType.Img)
